@@ -18,7 +18,10 @@ export async function getAllRequest(option: string, limit: number = 20) {
   return await fetch(getUrlByRequestOption(option).concat(`?limit=${limit}`));
 }
 
-export async function getByNameOrIndexRequest(option: string, name: string | number) {
+export async function getByNameOrIndexRequest(
+  option: string,
+  name: string | number
+) {
   const result = await fetch(getUrlByRequestOption(option).concat(`/${name}`));
   return result.status === 404 ? null : result;
 }
