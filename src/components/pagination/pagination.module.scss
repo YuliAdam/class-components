@@ -1,0 +1,30 @@
+@use '../../variables';
+.pagination {
+  display: flex;
+  justify-content: center;
+  padding-top: 25px;
+  position: relative;
+  &_wrap,
+  &_actual {
+    border: 1px solid variables.$glob_gray;
+    border-color: variables.$glob_gray;
+    border-radius: 10px;
+    margin: 5px;
+    padding: 5px 15px;
+    &.opacity {
+      opacity: 0.1;
+      cursor: default !important;
+      border-color: variables.$glob_gray !important;
+    }
+  }
+  &_actual {
+    border-color: variables.$glob_black;
+  }
+  &_wrap:hover {
+    cursor: pointer;
+    border-color: variables.$glob_black;
+  }
+  &_text {
+    margin: 0;
+  }
+}

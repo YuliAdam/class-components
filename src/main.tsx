@@ -1,23 +1,15 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import './index.css';
+import './index.scss';
 import App from './App.tsx';
-import {
-  getAllRequest,
-  getByNameOrIndexRequest,
-  requestOptions,
-} from './service/api.ts';
 
-createRoot(document.getElementById('root')!).render(
+const rootElement = document.createElement('div');
+rootElement.classList.add('body_wrap');
+document.body.prepend(rootElement);
+const root = createRoot(rootElement);
+
+root.render(
   <StrictMode>
     <App />
   </StrictMode>
 );
-
-getAllRequest(requestOptions.ability)
-  .then((res) => res.json())
-  .then((res) => console.log(res));
-
-getByNameOrIndexRequest(requestOptions.ability, 1)
-  .then((res) => res && res.json())
-  .then((res) => console.log(res));

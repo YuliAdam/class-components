@@ -1,0 +1,46 @@
+@use '../../variables';
+.search {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  position: relative;
+  &_wrap {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid variables.$glob_primary_color;
+    border-radius: 10px;
+    height: 40px;
+    padding: 0 10px;
+    margin: 25px 0;
+  }
+
+  &_icon {
+    width: 20px;
+    margin-left: 10px;
+    transition: all 0.3s;
+    path {
+      stroke: variables.$glob_primary_color;
+    }
+    &:hover {
+      path {
+        stroke: variables.$glob_black;
+      }
+    }
+    cursor: pointer;
+  }
+}
+.input {
+  flex-grow: 1;
+  border-color: transparent;
+  outline: none;
+  height: 100%;
+  background-color: transparent;
+  width: 30vw;
+  transition: all 0.3s;
+  &:hover,
+  &:not(:placeholder-shown),
+  &:focus {
+    width: 50vw;
+  }
+}

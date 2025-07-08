@@ -14,8 +14,17 @@ function getUrlByRequestOption(option: string) {
       : abilityUrl;
 }
 
-export async function getAllRequest(option: string, limit: number = 20) {
-  return await fetch(getUrlByRequestOption(option).concat(`?limit=${limit}`));
+export async function getAllRequest(
+  option: string,
+  params: { limit: number; offset: number } = { limit: 15, offset: 0 }
+) {
+  return (
+    await fetch(
+      getUrlByRequestOption(option).concat(
+        `?offset=${params.offset}&limit=${params.limit}`
+      )
+    )
+  ).json();
 }
 
 export async function getByNameOrIndexRequest(
@@ -23,5 +32,5 @@ export async function getByNameOrIndexRequest(
   name: string | number
 ) {
   const result = await fetch(getUrlByRequestOption(option).concat(`/${name}`));
-  return result.status === 404 ? null : result;
+  return result.status === 404 ? null : result.json();
 }

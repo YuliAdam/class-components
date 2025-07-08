@@ -1,0 +1,12 @@
+@font-face {
+  font-family: 'Poppins', Arial, Helvetica, sans-serif;
+  src: url('@assets/fonts/Poppins/Poppins-Regular.woff');
+}
+
+$glob_font: 'Poppins';
+$glob_primary_color: rgba(7, 2, 60, 0.61);
+$glob_text_color: rgb(24, 23, 23);
+$glob_yellow: rgb(255, 255, 0);
+$glob_black: rgb(0, 0, 0);
+$glob_gray: rgba(82, 82, 82, 0.247);
+$glob_red: rgb(255, 0, 0);

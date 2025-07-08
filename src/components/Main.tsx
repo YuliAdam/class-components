@@ -1,7 +1,14 @@
 import React from 'react';
+import Search from './search/Search';
+import Results from './results/Results';
 
 export default class Main extends React.Component {
   render() {
-    return <h1>Main</h1>;
+    return (
+      <main>
+        <Search />
+        <Results />
+      </main>
+    );
   }
 }
