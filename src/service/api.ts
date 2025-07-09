@@ -32,5 +32,5 @@ export async function getByNameOrIndexRequest(
   name: string | number
 ) {
   const result = await fetch(getUrlByRequestOption(option).concat(`/${name}`));
-  return result.status === 404 ? null : result.json();
+  return Math.trunc(result.status / 100) === 4 ? null : result.json();
 }

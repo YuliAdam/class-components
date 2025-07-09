@@ -8,12 +8,24 @@ interface Props {
   pokemon: IPokemon;
 }
 
+interface State {
+  color: string;
+}
+
 export default class PokemonCard extends React.Component<Props> {
+  public state: State = {
+    color: '',
+  };
+
+  componentDidMount(): void {
+    this.setState({ color: getRandomColor() });
+  }
+
   render() {
     return (
       <div
         className={styles.pokemon}
-        style={{ backgroundColor: getRandomColor() }}
+        style={{ backgroundColor: this.state.color }}
       >
         <h1 className={styles.pokemon_title}>
           {capitalizeFirstLetter(this.props.pokemon.name)}

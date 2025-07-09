@@ -4,6 +4,7 @@ import ErrorButton from '../error/ErrorButton';
 
 interface Props {
   pageNum: number;
+  hasNextPage: boolean;
   prevClick: () => void;
   nextClick: () => void;
 }
@@ -21,7 +22,10 @@ export default class Pagination extends React.Component<Props> {
         <div className={styles.pagination_actual}>
           <p className={styles.pagination_text}>{this.props.pageNum}</p>
         </div>
-        <div className={styles.pagination_wrap} onClick={this.props.nextClick}>
+        <div
+          className={`${styles.pagination_wrap} ${this.props.hasNextPage || styles.opacity}`}
+          onClick={this.props.hasNextPage ? this.props.nextClick : () => {}}
+        >
           <p className={styles.pagination_text}>Next</p>
         </div>
         <ErrorButton onClick={() => {}} />

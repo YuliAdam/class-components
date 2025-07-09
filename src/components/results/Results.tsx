@@ -1,6 +1,10 @@
 import React from 'react';
 import styles from './results.module.scss';
-import { getAllRequest, requestOptions } from '../../service/api';
+import {
+  getAllRequest,
+  getByNameOrIndexRequest,
+  requestOptions,
+} from '../../service/api';
 import type {
   IAllPokemonResponse,
   IObjectInfoResponse,
@@ -9,10 +13,18 @@ import type {
 } from '../../types/types';
 import PokemonCard from './PokemonCard';
 import Pagination from '../pagination/Pagination';
+import NotFound from '../notFound/NotFound';
+import isValidRequestString from '../../utils/isValidRequestString';
 
 interface State {
   items: IPokemon[];
   page: number;
+  isSearchMood: boolean;
+}
+
+interface Props {
+  searchValue: string;
+  deleteSearch: () => void;
 }
 
 const ITEMS_AT_PAGE = 15;
@@ -34,19 +46,18 @@ async function getPokemonObj(pokemon: IPokemonResponse) {
   };
 }
 
-export default class Results extends React.Component {
+export default class Results extends React.Component<Props> {
   public state: State = {
     items: [],
     page: 0,
+    isSearchMood: false,
   };
 
   async getPokemonRequest(page: number) {
-    console.log(page);
     const result: IAllPokemonResponse = await getAllRequest(
       requestOptions.pokemon,
       { limit: ITEMS_AT_PAGE, offset: page * ITEMS_AT_PAGE }
     );
-    console.log(result);
     return await Promise.all(
       result.results.map(async (pokemon: IObjectInfoResponse) => {
         const response = await (await fetch(pokemon.url)).json();
@@ -55,12 +66,50 @@ export default class Results extends React.Component {
     );
   }
 
+  async getPokemonBySearchRequest(name: string) {
+    const result: IPokemonResponse = await getByNameOrIndexRequest(
+      requestOptions.pokemon,
+      name
+    );
+    return result && getPokemonObj(result);
+  }
+
   async componentDidMount() {
     this.setState({
       items: await this.getPokemonRequest(this.state.page),
       page: this.state.page,
+      isSearchMood: false,
     });
-    console.log(this.state);
+  }
+
+  async componentDidUpdate(prevProps: Props) {
+    if (prevProps.searchValue !== this.props.searchValue) {
+      if (isValidRequestString(this.props.searchValue)) {
+        console.log('update');
+        const pokemon = await this.getPokemonBySearchRequest(
+          this.props.searchValue
+        );
+        if (pokemon) {
+          this.setState({
+            items: [pokemon],
+            page: 0,
+            isSearchMood: true,
+          });
+        } else {
+          this.setState({
+            items: [],
+            page: 0,
+          });
+        }
+      } else {
+        console.log('else update', this.props.searchValue);
+        this.setState({
+          items: await this.getPokemonRequest(0),
+          page: 0,
+          isSearchMood: false,
+        });
+      }
+    }
   }
 
   prevClick = async () => {
@@ -79,10 +128,29 @@ export default class Results extends React.Component {
     });
   };
 
-  render() {
+  getBackButtonIfSearch() {
     return (
+      this.state.isSearchMood && (
+        <button className={styles.result_btn} onClick={this.props.deleteSearch}>
+          Back
+        </button>
+      )
+    );
+  }
+
+  hasNextPage() {
+    return this.state.items.length >= ITEMS_AT_PAGE;
+  }
+
+  render() {
+    return this.state.items.length !== 0 ? (
       <>
-        <section className={styles.results}>
+        <section
+          className={
+            this.state.items.length === 1 ? styles.result : styles.results
+          }
+        >
+          {this.getBackButtonIfSearch()}
           {this.state.items.map((item) => (
             <PokemonCard key={item.name} pokemon={item} />
           ))}
@@ -91,8 +159,11 @@ export default class Results extends React.Component {
           pageNum={this.state.page + 1}
           prevClick={this.prevClick}
           nextClick={this.nextClick}
+          hasNextPage={this.hasNextPage()}
         />
       </>
+    ) : (
+      <NotFound backClick={this.props.deleteSearch} />
     );
   }
 }

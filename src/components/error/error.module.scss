@@ -15,5 +15,11 @@
       cursor: pointer;
       border-color: variables.$glob_red;
     }
+    @media (max-width: 644.8px) {
+      position: static;
+      width: 103.46px;
+      align-self: flex-end;
+      margin-bottom: 25px;
+    }
   }
 }

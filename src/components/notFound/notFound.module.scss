@@ -1,0 +1,38 @@
+@use '../../variables';
+.not_found {
+  width: calc(100% - 50px);
+  margin: auto;
+  text-align: center;
+  &_wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  &_img {
+    width: 400px;
+    height: auto;
+    margin: -180px -50px -180px -50px;
+  }
+  &_text {
+    font-size: 200px;
+  }
+  &_info {
+    font-size: 30px;
+    margin: 0;
+    margin-top: 30px;
+  }
+  &_btn {
+    background-color: transparent;
+    border: 1px solid variables.$glob_gray;
+    border-color: variables.$glob_gray;
+    border-radius: 10px;
+    margin: 5px;
+    padding: 5px 15px;
+    outline: none;
+    font-size: 20px;
+    &:hover {
+      cursor: pointer;
+      border-color: variables.$glob_black;
+    }
+  }
+}

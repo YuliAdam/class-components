@@ -1,22 +1,17 @@
-import React from 'react';
+import React, { type ChangeEvent, type KeyboardEvent } from 'react';
 
 interface Props {
   className: string;
   placeholder: string;
   type: string;
   id: string;
-  onChange: () => void;
-}
-interface State {
   value: string;
+  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  onKeyDown: (e: KeyboardEvent<HTMLInputElement>) => void;
 }
 
-export default class Input extends React.Component<Props, State> {
-  public state: State = {
-    value: '',
-  };
-
+export default class Input extends React.Component<Props> {
   render() {
-    return <input {...this.props} value={this.state.value} />;
+    return <input {...this.props} />;
   }
 }

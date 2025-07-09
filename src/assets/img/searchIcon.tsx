@@ -2,13 +2,14 @@ import React from 'react';
 
 interface Props {
   className: string;
+  onClick: () => void;
 }
 
 export default class SearchIcon extends React.Component<Props> {
   render() {
     return (
       <svg
-        className={this.props.className}
+        {...this.props}
         width="800px"
         height="800px"
         viewBox="0 -0.5 25 25"
