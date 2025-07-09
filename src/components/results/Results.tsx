@@ -16,6 +16,7 @@ import PokemonCard from './PokemonCard';
 import Pagination from '../pagination/Pagination';
 import NotFound from '../notFound/NotFound';
 import isValidRequestString from '../../utils/isValidRequestString';
+import { getSearchValueFromLocalStorage } from '../../localStorage/localStorage';
 
 interface State {
   items: IPokemon[];
@@ -90,51 +91,59 @@ export default class Results extends React.Component<Props> {
   }
 
   async componentDidMount() {
-    this.setState({
-      items: await this.getPokemonRequest(this.state.page),
-      page: this.state.page,
-      isSearchMood: false,
-    });
+    if (!getSearchValueFromLocalStorage()) {
+      this.setState({
+        items: await this.getPokemonRequest(this.state.page),
+        page: this.state.page,
+        isSearchMood: false,
+      });
+    } else {
+      await this.updateCards();
+    }
   }
 
-  async componentDidUpdate(prevProps: Props) {
-    if (prevProps.searchValue !== this.props.searchValue) {
-      if (isValidRequestString(this.props.searchValue)) {
-        console.log('update');
-        const pokemon = await this.getPokemonBySearchRequest(
-          this.props.searchValue
-        );
-        if (pokemon) {
+  async updateCards() {
+    if (isValidRequestString(this.props.searchValue)) {
+      console.log('update');
+      const pokemon = await this.getPokemonBySearchRequest(
+        this.props.searchValue
+      );
+      if (pokemon) {
+        this.setState({
+          items: [pokemon],
+          page: 0,
+          isSearchMood: true,
+        });
+      } else {
+        const pokemonsByAbilityOrType =
+          await this.getPokemonByAbilityOrTypeRequest(this.props.searchValue);
+        if (pokemonsByAbilityOrType) {
           this.setState({
-            items: [pokemon],
+            items: pokemonsByAbilityOrType,
             page: 0,
             isSearchMood: true,
           });
         } else {
-          const pokemonsByAbilityOrType =
-            await this.getPokemonByAbilityOrTypeRequest(this.props.searchValue);
-          if (pokemonsByAbilityOrType) {
-            this.setState({
-              items: pokemonsByAbilityOrType,
-              page: 0,
-              isSearchMood: true,
-            });
-          } else {
-            this.setState({
-              items: [],
-              page: 0,
-              isSearchMood: true,
-            });
-          }
+          this.setState({
+            items: [],
+            page: 0,
+            isSearchMood: true,
+          });
         }
-      } else {
-        console.log('else update', this.props.searchValue);
-        this.setState({
-          items: await this.getPokemonRequest(0),
-          page: 0,
-          isSearchMood: false,
-        });
       }
+    } else {
+      console.log('else update', this.props.searchValue);
+      this.setState({
+        items: await this.getPokemonRequest(0),
+        page: 0,
+        isSearchMood: false,
+      });
+    }
+  }
+
+  async componentDidUpdate(prevProps: Props) {
+    if (prevProps.searchValue !== this.props.searchValue) {
+      await this.updateCards();
     }
   }
 

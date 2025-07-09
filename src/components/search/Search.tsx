@@ -3,6 +3,7 @@ import Input from '../Input';
 import SearchIcon from '../../assets/img/searchIcon';
 import styles from './search.module.scss';
 import ErrorButton from '../error/ErrorButton';
+import { getSearchValueFromLocalStorage } from '../../localStorage/localStorage';
 
 interface Props {
   submitInput: (text: string) => void;
@@ -12,7 +13,7 @@ interface State {
 }
 export default class Search extends React.Component<Props> {
   state: State = {
-    value: '',
+    value: getSearchValueFromLocalStorage() || '',
   };
 
   changeInput(e: ChangeEvent<HTMLInputElement>) {
