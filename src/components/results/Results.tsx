@@ -6,6 +6,7 @@ import {
   requestOptions,
 } from '../../service/api';
 import type {
+  IAbilityResponse,
   IAllPokemonResponse,
   IObjectInfoResponse,
   IPokemon,
@@ -74,6 +75,20 @@ export default class Results extends React.Component<Props> {
     return result && getPokemonObj(result);
   }
 
+  async getPokemonByAbilityOrTypeRequest(searchStr: string) {
+    const result: IAbilityResponse =
+      (await getByNameOrIndexRequest(requestOptions.ability, searchStr)) ??
+      (await getByNameOrIndexRequest(requestOptions.type, searchStr));
+    if (result) {
+      return await Promise.all(
+        result.pokemon.map(async (item: { pokemon: IObjectInfoResponse }) => {
+          const response = await (await fetch(item.pokemon.url)).json();
+          return getPokemonObj(response);
+        })
+      );
+    }
+  }
+
   async componentDidMount() {
     this.setState({
       items: await this.getPokemonRequest(this.state.page),
@@ -96,10 +111,21 @@ export default class Results extends React.Component<Props> {
             isSearchMood: true,
           });
         } else {
-          this.setState({
-            items: [],
-            page: 0,
-          });
+          const pokemonsByAbilityOrType =
+            await this.getPokemonByAbilityOrTypeRequest(this.props.searchValue);
+          if (pokemonsByAbilityOrType) {
+            this.setState({
+              items: pokemonsByAbilityOrType,
+              page: 0,
+              isSearchMood: true,
+            });
+          } else {
+            this.setState({
+              items: [],
+              page: 0,
+              isSearchMood: true,
+            });
+          }
         }
       } else {
         console.log('else update', this.props.searchValue);
@@ -114,32 +140,44 @@ export default class Results extends React.Component<Props> {
 
   prevClick = async () => {
     if (this.state.page) {
-      this.setState({
-        items: await this.getPokemonRequest(this.state.page - 1),
-        page: this.state.page - 1,
-      });
+      this.changePage(-1);
     }
   };
 
-  nextClick = async () => {
-    this.setState({
-      items: await this.getPokemonRequest(this.state.page + 1),
-      page: this.state.page + 1,
-    });
-  };
+  nextClick = async () => this.changePage(+1);
 
-  getBackButtonIfSearch() {
-    return (
-      this.state.isSearchMood && (
-        <button className={styles.result_btn} onClick={this.props.deleteSearch}>
-          Back
-        </button>
-      )
-    );
+  async changePage(num: number) {
+    if (!this.state.isSearchMood) {
+      this.setState({
+        items: await this.getPokemonRequest(this.state.page + num),
+        page: this.state.page + num,
+        isSearchMood: false,
+      });
+    } else {
+      this.setState({
+        items: this.state.items,
+        page: this.state.page + num,
+        isSearchMood: true,
+      });
+    }
   }
 
   hasNextPage() {
-    return this.state.items.length >= ITEMS_AT_PAGE;
+    return this.state.isSearchMood
+      ? this.state.items.length > ITEMS_AT_PAGE * (this.state.page + 1)
+      : this.state.items.length >= ITEMS_AT_PAGE;
+  }
+
+  getPokemonCards() {
+    return this.state.items.map((item, i) => {
+      if (
+        this.state.items.length <= ITEMS_AT_PAGE ||
+        (i >= this.state.page * ITEMS_AT_PAGE &&
+          i < (this.state.page + 1) * ITEMS_AT_PAGE)
+      ) {
+        return <PokemonCard key={item.name} pokemon={item} />;
+      }
+    });
   }
 
   render() {
@@ -150,10 +188,7 @@ export default class Results extends React.Component<Props> {
             this.state.items.length === 1 ? styles.result : styles.results
           }
         >
-          {this.getBackButtonIfSearch()}
-          {this.state.items.map((item) => (
-            <PokemonCard key={item.name} pokemon={item} />
-          ))}
+          {this.getPokemonCards()}
         </section>
         <Pagination
           pageNum={this.state.page + 1}
@@ -163,7 +198,9 @@ export default class Results extends React.Component<Props> {
         />
       </>
     ) : (
-      <NotFound backClick={this.props.deleteSearch} />
+      this.state.isSearchMood && (
+        <NotFound backClick={this.props.deleteSearch} />
+      )
     );
   }
 }

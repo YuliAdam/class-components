@@ -19,11 +19,14 @@ export default class Search extends React.Component<Props> {
     if (e.target && e.target instanceof HTMLInputElement) {
       const text = e.target.value;
       this.setState({ value: text });
+      if (!text.trim()) {
+        this.props.submitInput(text);
+      }
     }
   }
 
   keyDownInput(e: KeyboardEvent<HTMLInputElement>) {
-    if (e.key === 'Enter' && e.target && e.target instanceof HTMLInputElement) {
+    if (e.target && e.target instanceof HTMLInputElement && e.key === 'Enter') {
       const text = e.target.value.trim();
       this.props.submitInput(text);
       this.setState({ value: text });

@@ -23,3 +23,7 @@ export interface IPokemon {
   img: string;
   types: string[];
 }
+
+export interface IAbilityResponse {
+  pokemon: { pokemon: IObjectInfoResponse }[];
+}
