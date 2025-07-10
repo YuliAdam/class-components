@@ -17,11 +17,13 @@ import Pagination from '../pagination/Pagination';
 import NotFound from '../notFound/NotFound';
 import isValidRequestString from '../../utils/isValidRequestString';
 import { getSearchValueFromLocalStorage } from '../../localStorage/localStorage';
+import Loading from '../loading/Loading';
 
 interface State {
   items: IPokemon[];
   page: number;
   isSearchMood: boolean;
+  isLoading: boolean;
 }
 
 interface Props {
@@ -54,7 +56,17 @@ export default class Results extends React.Component<Props> {
     items: [],
     page: 0,
     isSearchMood: false,
+    isLoading: true,
   };
+
+  setLoadingMood() {
+    this.setState({
+      items: [],
+      page: this.state.page,
+      isSearchMood: this.state.isSearchMood,
+      isLoading: true,
+    });
+  }
 
   async getPokemonRequest(page: number) {
     const result: IAllPokemonResponse = await getAllRequest(
@@ -97,6 +109,7 @@ export default class Results extends React.Component<Props> {
         items: await this.getPokemonRequest(this.state.page),
         page: this.state.page,
         isSearchMood: false,
+        isLoading: true,
       });
     } else {
       await this.updateCards();
@@ -104,8 +117,8 @@ export default class Results extends React.Component<Props> {
   }
 
   async updateCards() {
+    this.setLoadingMood();
     if (isValidRequestString(this.props.searchValue)) {
-      console.log('update');
       const pokemon = await this.getPokemonBySearchRequest(
         this.props.searchValue
       );
@@ -114,6 +127,7 @@ export default class Results extends React.Component<Props> {
           items: [pokemon],
           page: 0,
           isSearchMood: true,
+          isLoading: false,
         });
       } else {
         const pokemonsByAbilityOrType =
@@ -123,12 +137,14 @@ export default class Results extends React.Component<Props> {
             items: pokemonsByAbilityOrType,
             page: 0,
             isSearchMood: true,
+            isLoading: false,
           });
         } else {
           this.setState({
             items: [],
             page: 0,
             isSearchMood: true,
+            isLoading: false,
           });
         }
       }
@@ -138,6 +154,7 @@ export default class Results extends React.Component<Props> {
         items: await this.getPokemonRequest(0),
         page: 0,
         isSearchMood: false,
+        isLoading: false,
       });
     }
   }
@@ -157,18 +174,25 @@ export default class Results extends React.Component<Props> {
   nextClick = async () => this.changePage(+1);
 
   async changePage(num: number) {
+    this.setLoadingMood();
     if (!this.state.isSearchMood) {
       this.setState({
         items: await this.getPokemonRequest(this.state.page + num),
         page: this.state.page + num,
         isSearchMood: false,
+        isLoading: false,
       });
     } else {
-      this.setState({
-        items: this.state.items,
-        page: this.state.page + num,
-        isSearchMood: true,
-      });
+      const copyItems = this.state.items.slice();
+      this.setLoadingMood();
+      setTimeout(() => {
+        this.setState({
+          items: copyItems,
+          page: this.state.page + num,
+          isSearchMood: true,
+          isLoading: false,
+        });
+      }, 300);
     }
   }
 
@@ -210,6 +234,8 @@ export default class Results extends React.Component<Props> {
           hasNextPage={this.hasNextPage()}
         />
       </>
+    ) : this.state.isLoading ? (
+      <Loading />
     ) : (
       this.state.isSearchMood && (
         <NotFound backClick={this.props.deleteSearch} />
