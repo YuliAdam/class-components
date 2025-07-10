@@ -32,5 +32,8 @@ export async function getByNameOrIndexRequest(
   name: string | number
 ) {
   const result = await fetch(getUrlByRequestOption(option).concat(`/${name}`));
+  if (result.status === 500) {
+    throw Error('my error');
+  }
   return Math.trunc(result.status / 100) === 4 ? null : result.json();
 }

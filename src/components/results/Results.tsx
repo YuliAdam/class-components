@@ -27,6 +27,7 @@ interface State {
 interface Props {
   searchValue: string;
   deleteSearch: () => void;
+  hasError: boolean;
 }
 
 const ITEMS_AT_PAGE = 15;
@@ -190,6 +191,9 @@ export default class Results extends React.Component<Props> {
   }
 
   render() {
+    if (this.props.hasError) {
+      throw Error('my test error');
+    }
     return this.state.items.length !== 0 ? (
       <>
         <section

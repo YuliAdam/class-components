@@ -7,6 +7,8 @@ import { getSearchValueFromLocalStorage } from '../../localStorage/localStorage'
 
 interface Props {
   submitInput: (text: string) => void;
+  generateError: () => void;
+  hasError: boolean;
 }
 interface State {
   value: string;
@@ -56,7 +58,10 @@ export default class Search extends React.Component<Props> {
             />
           </div>
         </div>
-        <ErrorButton onClick={() => {}} />
+        <ErrorButton
+          onClick={this.props.generateError}
+          hasError={this.props.hasError}
+        />
       </section>
     );
   }

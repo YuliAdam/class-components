@@ -1,6 +1,5 @@
 import React from 'react';
 import styles from './pagination.module.scss';
-import ErrorButton from '../error/ErrorButton';
 
 interface Props {
   pageNum: number;
@@ -14,7 +13,7 @@ export default class Pagination extends React.Component<Props> {
     return (
       <section className={styles.pagination}>
         <div
-          className={`${styles.pagination_wrap} ${this.props.pageNum - 1 || styles.opacity}`}
+          className={`${styles.pagination_wrap} ${this.props.pageNum - 1 ? '' : 'opacity'}`}
           onClick={this.props.pageNum - 1 ? this.props.prevClick : () => {}}
         >
           <p className={styles.pagination_text}>Prev</p>
@@ -23,12 +22,11 @@ export default class Pagination extends React.Component<Props> {
           <p className={styles.pagination_text}>{this.props.pageNum}</p>
         </div>
         <div
-          className={`${styles.pagination_wrap} ${this.props.hasNextPage || styles.opacity}`}
+          className={`${styles.pagination_wrap} ${this.props.hasNextPage ? '' : 'opacity'}`}
           onClick={this.props.hasNextPage ? this.props.nextClick : () => {}}
         >
           <p className={styles.pagination_text}>Next</p>
         </div>
-        <ErrorButton onClick={() => {}} />
       </section>
     );
   }

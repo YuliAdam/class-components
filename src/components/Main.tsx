@@ -5,14 +5,17 @@ import {
   getSearchValueFromLocalStorage,
   setSearchValueInLocalStorage,
 } from '../localStorage/localStorage';
+import ErrorBoundary from './error/ErrorBoundary';
 
 interface State {
   searchValue: string;
+  hasError: boolean;
 }
 
 export default class Main extends React.Component {
   state: State = {
     searchValue: getSearchValueFromLocalStorage() || '',
+    hasError: false,
   };
 
   submitInput(text: string) {
@@ -21,13 +24,37 @@ export default class Main extends React.Component {
     setSearchValueInLocalStorage(text.trim());
   }
 
+  generateError() {
+    this.setState({
+      searchValue: this.state.searchValue,
+      hasError: true,
+    });
+  }
+
+  removeError() {
+    this.setState({
+      searchValue: this.state.searchValue,
+      hasError: false,
+    });
+  }
+
   render() {
     return (
       <main>
-        <Search submitInput={(text: string) => this.submitInput(text)} />
-        <Results
-          searchValue={this.state.searchValue}
-          deleteSearch={() => this.submitInput('')}
+        <Search
+          submitInput={(text: string) => this.submitInput(text)}
+          generateError={() => this.generateError()}
+          hasError={this.state.hasError}
+        />
+        <ErrorBoundary
+          fallback={
+            <Results
+              searchValue={this.state.searchValue}
+              deleteSearch={() => this.submitInput('')}
+              hasError={this.state.hasError}
+            />
+          }
+          backClick={() => this.removeError()}
         />
       </main>
     );

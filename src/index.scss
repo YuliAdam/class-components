@@ -1,3 +1,5 @@
+@use './variables';
+
 body {
   min-height: calc(100vh);
   height: 100%;
@@ -13,4 +15,10 @@ a {
 main {
   width: 100%;
   padding-bottom: 60px;
+}
+
+.opacity {
+  opacity: 0.1;
+  cursor: default !important;
+  border-color: variables.$glob_gray !important;
 }
