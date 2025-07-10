@@ -186,12 +186,12 @@ export default class Results extends React.Component<Props> {
       const copyItems = this.state.items.slice();
       this.setLoadingMood();
       setTimeout(() => {
-        this.setState({
+        this.setState((prevState: State) => ({
           items: copyItems,
-          page: this.state.page + num,
+          page: prevState.page + num,
           isSearchMood: true,
           isLoading: false,
-        });
+        }));
       }, 300);
     }
   }
