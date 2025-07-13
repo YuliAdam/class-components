@@ -18,13 +18,15 @@ export async function getAllRequest(
   option: string,
   params: { limit: number; offset: number } = { limit: 15, offset: 0 }
 ) {
-  return (
-    await fetch(
-      getUrlByRequestOption(option).concat(
-        `?offset=${params.offset}&limit=${params.limit}`
-      )
+  const result = await fetch(
+    getUrlByRequestOption(option).concat(
+      `?offset=${params.offset}&limit=${params.limit}`
     )
-  ).json();
+  );
+  if (result.status === 500) {
+    throw Error('Server error');
+  }
+  return result.json();
 }
 
 export async function getByNameOrIndexRequest(
@@ -33,7 +35,7 @@ export async function getByNameOrIndexRequest(
 ) {
   const result = await fetch(getUrlByRequestOption(option).concat(`/${name}`));
   if (result.status === 500) {
-    throw Error('my error');
+    throw Error('Server error');
   }
   return Math.trunc(result.status / 100) === 4 ? null : result.json();
 }

@@ -5,5 +5,5 @@ export function setSearchValueInLocalStorage(value: string) {
 }
 
 export function getSearchValueFromLocalStorage() {
-  return localStorage.getItem(localStorageSearchValueKey);
+  return localStorage.getItem(localStorageSearchValueKey) || '';
 }

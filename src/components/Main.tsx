@@ -14,17 +14,17 @@ interface State {
 
 export default class Main extends React.Component {
   state: State = {
-    searchValue: getSearchValueFromLocalStorage() || '',
+    searchValue: getSearchValueFromLocalStorage(),
     hasError: false,
   };
 
   submitInput(text: string) {
     this.setState({ searchValue: text.trim() });
-    console.log(text);
     setSearchValueInLocalStorage(text.trim());
   }
 
   generateError() {
+    console.log('gener err', this.state);
     this.setState({
       searchValue: this.state.searchValue,
       hasError: true,
@@ -52,6 +52,7 @@ export default class Main extends React.Component {
               searchValue={this.state.searchValue}
               deleteSearch={() => this.submitInput('')}
               hasError={this.state.hasError}
+              generateError={() => this.generateError()}
             />
           }
           backClick={() => this.removeError()}

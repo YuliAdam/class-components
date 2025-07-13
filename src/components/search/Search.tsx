@@ -15,7 +15,7 @@ interface State {
 }
 export default class Search extends React.Component<Props> {
   state: State = {
-    value: getSearchValueFromLocalStorage() || '',
+    value: getSearchValueFromLocalStorage(),
   };
 
   changeInput(e: ChangeEvent<HTMLInputElement>) {

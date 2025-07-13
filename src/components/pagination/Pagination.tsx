@@ -14,7 +14,7 @@ export default class Pagination extends React.Component<Props> {
       <section className={styles.pagination}>
         <div
           className={`${styles.pagination_wrap} ${this.props.pageNum - 1 ? '' : 'opacity'}`}
-          onClick={this.props.pageNum - 1 ? this.props.prevClick : () => {}}
+          onClick={this.props.prevClick}
         >
           <p className={styles.pagination_text}>Prev</p>
         </div>
@@ -23,7 +23,7 @@ export default class Pagination extends React.Component<Props> {
         </div>
         <div
           className={`${styles.pagination_wrap} ${this.props.hasNextPage ? '' : 'opacity'}`}
-          onClick={this.props.hasNextPage ? this.props.nextClick : () => {}}
+          onClick={this.props.nextClick}
         >
           <p className={styles.pagination_text}>Next</p>
         </div>

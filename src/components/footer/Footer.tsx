@@ -5,7 +5,9 @@ import styles from './footer.module.scss';
 
 const gitHubInfo = {
   href: 'https://github.com/YuliAdam',
-  text: '@YuliAdam/',
+  text: '@YuliAdam',
+  year: '2025',
+  schoolName: 'RSchool',
 };
 
 const COURSE_LINK = 'https://rs.school/courses/reactjs';
@@ -20,7 +22,9 @@ export default class Footer extends React.Component {
         <a className={styles.footer_link} href={gitHubInfo.href}>
           {gitHubInfo.text}
         </a>
-        <p className={styles.footer_text}>/2025/RSchool</p>
+        <p className={styles.footer_text}>
+          /{gitHubInfo.year}/{gitHubInfo.schoolName}
+        </p>
         <a className={styles.footer_link} href={COURSE_LINK}>
           <RSSchoolLogo className={styles.footer_RSSchool} />
         </a>

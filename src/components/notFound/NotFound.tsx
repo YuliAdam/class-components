@@ -6,6 +6,8 @@ interface Props {
   backClick: () => void;
 }
 
+const NOT_FOUND_MESSAGE = 'Pokemon not found';
+
 export default class NotFound extends React.Component<Props> {
   render() {
     return (
@@ -15,7 +17,7 @@ export default class NotFound extends React.Component<Props> {
           <img className={styles.not_found_img} src={Pokeball} alt="pokeball" />
           <span className={styles.not_found_text}>4</span>
         </div>
-        <p className={styles.not_found_info}>Pokemon not found</p>
+        <p className={styles.not_found_info}>{NOT_FOUND_MESSAGE}</p>
         <button className={styles.not_found_btn} onClick={this.props.backClick}>
           Back
         </button>
