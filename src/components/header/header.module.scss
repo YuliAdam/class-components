@@ -1,0 +1,15 @@
+@use '../../variables';
+
+.header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  &_title {
+    width: 278px;
+    height: auto;
+    stroke: variables.$glob_black;
+    stroke-width: 0.2px;
+    fill: variables.$glob_yellow;
+  }
+}

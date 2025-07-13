@@ -1,0 +1,36 @@
+@use '../../variables';
+
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: calc(100% - 50px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  &_gitHub,
+  &_RSSchool {
+    width: 20px;
+    height: auto;
+    margin: 0 5px;
+  }
+  &_gitHub {
+    path {
+      stroke: variables.$glob_black;
+    }
+  }
+  &_RSSchool {
+    g {
+      circle {
+        fill: variables.$glob_black;
+      }
+      path {
+        stroke: variables.$glob_yellow;
+      }
+    }
+  }
+  &_text,
+  &_link {
+    color: variables.$glob_black;
+    font: variables.$glob_font;
+  }
+}

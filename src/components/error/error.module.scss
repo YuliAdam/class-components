@@ -1,0 +1,25 @@
+@use '../../variables';
+.error {
+  &_button {
+    position: absolute;
+    right: 0;
+    top: 25px;
+    background-color: transparent;
+    border: 1px solid variables.$glob_gray;
+    border-color: variables.$glob_gray;
+    border-radius: 10px;
+    margin: 5px;
+    padding: 5px 15px;
+    outline: none;
+    &:hover {
+      cursor: pointer;
+      border-color: variables.$glob_red;
+    }
+    @media (max-width: 644.8px) {
+      position: static;
+      width: 103.46px;
+      align-self: flex-end;
+      margin-bottom: 25px;
+    }
+  }
+}
