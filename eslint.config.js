@@ -20,6 +20,7 @@ export default tseslint.config([
       ...tseslint.configs.strict,
       eslintPluginPrettier,
     ],
+    ignores: ['src/coverage/*.{js,ts,tsx}'],
     languageOptions: {
       ecmaVersion: 2020,
       globals: globals.browser,

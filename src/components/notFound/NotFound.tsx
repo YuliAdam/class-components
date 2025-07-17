@@ -6,7 +6,7 @@ interface Props {
   backClick: () => void;
 }
 
-const NOT_FOUND_MESSAGE = 'Pokemon not found';
+export const NOT_FOUND_MESSAGE = 'Pokemon not found';
 
 export default class NotFound extends React.Component<Props> {
   render() {
