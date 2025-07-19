@@ -18,6 +18,7 @@ export default defineConfig({
         'src/**/*.d.ts',
         'src/configs/*',
       ],
+      all: true,
       thresholds: {
         global: {
           statements: 80,
