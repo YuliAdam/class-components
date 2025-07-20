@@ -33,7 +33,7 @@ interface Props {
   generateError: () => void;
 }
 
-const ITEMS_AT_PAGE = 15;
+export const ITEMS_AT_PAGE = 15;
 
 function getPokemonObj(pokemon: IPokemonResponse) {
   return {
@@ -234,6 +234,7 @@ export default class Results extends React.Component<Props> {
           className={
             this.state.items.length === 1 ? styles.result : styles.results
           }
+          data-testid="pokemon card wrap"
         >
           {this.getPokemonCards()}
         </section>
