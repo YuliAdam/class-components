@@ -6,7 +6,7 @@ import {
   requestOptions,
 } from '../../service/api';
 import type {
-  IAbilityResponse,
+  IAbilityOrTypeResponse,
   IAllPokemonResponse,
   IObjectInfoResponse,
   IPokemon,
@@ -33,9 +33,9 @@ interface Props {
   generateError: () => void;
 }
 
-const ITEMS_AT_PAGE = 15;
+export const ITEMS_AT_PAGE = 15;
 
-async function getPokemonObj(pokemon: IPokemonResponse) {
+function getPokemonObj(pokemon: IPokemonResponse) {
   return {
     abilities: [
       ...pokemon.abilities.map(
@@ -74,7 +74,7 @@ async function getPokemonBySearchRequest(name: string) {
 }
 
 async function getPokemonByAbilityOrTypeRequest(searchStr: string) {
-  const result: IAbilityResponse =
+  const result: IAbilityOrTypeResponse =
     (await getByNameOrIndexRequest(requestOptions.ability, searchStr)) ||
     (await getByNameOrIndexRequest(requestOptions.type, searchStr));
   if (result) {
@@ -234,6 +234,7 @@ export default class Results extends React.Component<Props> {
           className={
             this.state.items.length === 1 ? styles.result : styles.results
           }
+          data-testid="pokemon card wrap"
         >
           {this.getPokemonCards()}
         </section>

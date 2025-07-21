@@ -24,7 +24,6 @@ export default class Main extends React.Component {
   }
 
   generateError() {
-    console.log('gener err', this.state);
     this.setState({
       searchValue: this.state.searchValue,
       hasError: true,

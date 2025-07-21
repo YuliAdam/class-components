@@ -1,5 +1,5 @@
 import React, { type ChangeEvent, type KeyboardEvent } from 'react';
-import Input from '../Input';
+import Input from './Input';
 import SearchIcon from '../../assets/img/searchIcon';
 import styles from './search.module.scss';
 import ErrorButton from '../error/ErrorButton';

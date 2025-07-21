@@ -1,7 +1,7 @@
 export interface IAllPokemonResponse {
   count: number;
   next: string;
-  previous: null;
+  previous: null | string;
   results: IObjectInfoResponse[];
 }
 
@@ -24,6 +24,6 @@ export interface IPokemon {
   types: string[];
 }
 
-export interface IAbilityResponse {
+export interface IAbilityOrTypeResponse {
   pokemon: { pokemon: IObjectInfoResponse }[];
 }

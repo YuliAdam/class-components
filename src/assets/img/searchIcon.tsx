@@ -16,6 +16,7 @@ export default class SearchIcon extends React.Component<Props> {
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
+        <title>Search Icon</title>
         <path
           fillRule="evenodd"
           clipRule="evenodd"
