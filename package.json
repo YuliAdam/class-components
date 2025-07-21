@@ -11,7 +11,8 @@
     "prepare": "husky && chmod ug+x .husky/*",
     "format:fix": "prettier --write .",
     "test": "vitest",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "pre-push-test": "vitest run"
   },
   "dependencies": {
     "react": "^19.1.0",
