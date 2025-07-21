@@ -15,13 +15,6 @@ const mockDate = {
   generateError: vi.fn(),
 };
 
-const errorMockDate = {
-  searchValue: '',
-  deleteSearch: vi.fn(),
-  hasError: true,
-  generateError: vi.fn(),
-};
-
 describe('search test', () => {
   const pageNum = 1;
   beforeEach(() => {
@@ -43,10 +36,6 @@ describe('search test', () => {
     expect(prevBtn).toBeInTheDocument();
     const nextBtn = screen.getByText('Next');
     expect(nextBtn).toBeInTheDocument();
-  });
-
-  test('loads error page if error', async () => {
-    expect(() => new Results(errorMockDate).render()).toThrowError();
   });
 
   test('loads and displays result by search name', async () => {
@@ -106,5 +95,10 @@ describe('search test', () => {
     });
     render(<Results {...mockDate} />);
     expect(screen.getByText(NOT_FOUND_MESSAGE)).toBeInTheDocument();
+  });
+
+  test('loads error page if error', async () => {
+    mockDate.hasError = true;
+    expect(() => new Results(mockDate).render()).toThrowError();
   });
 });

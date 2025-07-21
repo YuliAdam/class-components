@@ -3,16 +3,20 @@ import { userEvent } from '@testing-library/user-event';
 import NotFound, {
   NOT_FOUND_MESSAGE,
 } from '../../../src/components/notFound/NotFound';
-import { expect, test, vi } from 'vitest';
+import { describe, expect, test, vi } from 'vitest';
+import '@testing-library/jest-dom';
 
-test('loads and displays header', async () => {
-  const handleClick = vi.fn();
-  render(<NotFound backClick={handleClick} />);
-  expect(await screen.findAllByText('4')).toHaveLength(2);
-  expect(await screen.findAllByAltText('pokeball')).toBeTruthy();
-  expect(screen.getByText(NOT_FOUND_MESSAGE)).toBeTruthy();
-  const button = screen.getByRole('button');
-  expect(button).toBeTruthy();
-  await userEvent.click(button);
-  expect(handleClick).toHaveBeenCalledTimes(1);
+const handleClick = vi.fn();
+
+describe('not found test', () => {
+  test('loads and displays not found', async () => {
+    render(<NotFound backClick={handleClick} />);
+    expect(await screen.findAllByText('4')).toHaveLength(2);
+    expect(await screen.findByAltText('pokeball')).toBeInTheDocument();
+    expect(screen.getByText(NOT_FOUND_MESSAGE)).toBeInTheDocument();
+    const button = screen.getByRole('button');
+    expect(button).toBeInTheDocument();
+    await userEvent.click(button);
+    expect(handleClick).toHaveBeenCalledTimes(1);
+  });
 });

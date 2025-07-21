@@ -12,7 +12,7 @@ describe('local storage', () => {
     localStorage.clear();
   });
   describe('getSearchValueFromLocalStorage', () => {
-    test('gets search value from LocalStorage', () => {
+    test('get search value from LocalStorage', () => {
       const testValue = 'test';
       localStorage.setItem(LS_KEY, testValue);
       expect(getSearchValueFromLocalStorage()).toBe(testValue);

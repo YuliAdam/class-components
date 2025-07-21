@@ -1,14 +1,16 @@
 import { expect, it, describe } from 'vitest';
 import isValidRequestString from '../../src/utils/isValidRequestString';
 
+const falseStringArr = ['', '...', '/', '?', '.?/'];
+const trueStringArr = ['.test/?', 'test'];
+
 describe('isValidRequestString', () => {
   it('should test if request string is valid', () => {
-    expect(isValidRequestString('')).toBeFalsy();
-    expect(isValidRequestString('...')).toBeFalsy();
-    expect(isValidRequestString('/')).toBeFalsy();
-    expect(isValidRequestString('?')).toBeFalsy();
-    expect(isValidRequestString('.test/?')).toBeTruthy();
-    expect(isValidRequestString('.?/')).toBeFalsy();
-    expect(isValidRequestString('test')).toBeTruthy();
+    falseStringArr.forEach((str) =>
+      expect(isValidRequestString(str)).toBeFalsy()
+    );
+    trueStringArr.forEach((str) =>
+      expect(isValidRequestString(str)).toBeTruthy()
+    );
   });
 });

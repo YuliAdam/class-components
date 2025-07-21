@@ -1,8 +1,11 @@
 import { render, screen } from '@testing-library/react';
 import Header from '../../../src/components/header/Header';
-import { expect, test } from 'vitest';
+import { describe, expect, test } from 'vitest';
+import '@testing-library/jest-dom';
 
-test('loads and displays header', async () => {
-  render(<Header />);
-  expect(await screen.findAllByTitle('Pokémon icon')).toBeTruthy();
+describe('header test', () => {
+  test('loads and displays header', async () => {
+    render(<Header />);
+    expect(await screen.findByTitle('Pokémon icon')).toBeInTheDocument();
+  });
 });

@@ -22,7 +22,7 @@ const errorMockDate = {
   ),
 };
 
-describe('error content test', () => {
+describe('error boundary test', () => {
   test('loads and displays main content', async () => {
     render(<ErrorBoundary {...mockDate} />);
     expect(screen.getByText('Main content')).toBeInTheDocument();

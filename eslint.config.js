@@ -9,7 +9,7 @@ import { globalIgnores } from 'eslint/config';
 import reactCompiler from 'eslint-plugin-react-compiler';
 
 export default tseslint.config([
-  globalIgnores(['dist']),
+  globalIgnores(['dist','coverage']),
   {
     files: ['**/*.{ts,tsx}'],
     extends: [
@@ -20,7 +20,6 @@ export default tseslint.config([
       ...tseslint.configs.strict,
       eslintPluginPrettier,
     ],
-    ignores: ['coverage/*.{js,ts,tsx}'],
     languageOptions: {
       ecmaVersion: 2020,
       globals: globals.browser,

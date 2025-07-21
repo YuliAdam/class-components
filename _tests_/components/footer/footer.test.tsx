@@ -1,12 +1,15 @@
 import { render, screen } from '@testing-library/react';
 import Footer, { gitHubInfo } from '../../../src/components/footer/Footer';
-import { expect, test } from 'vitest';
+import { describe, expect, test } from 'vitest';
+import '@testing-library/jest-dom';
 
-test('loads and displays footer', async () => {
-  render(<Footer />);
-  expect(screen.getByText(`${gitHubInfo.text}`)).toBeTruthy();
-  expect(
-    screen.getByText(`/${gitHubInfo.year}/${gitHubInfo.schoolName}`)
-  ).toBeTruthy();
-  expect(await screen.findAllByRole('link')).toHaveLength(3);
+describe('footer test', () => {
+  test('loads and displays footer', async () => {
+    render(<Footer />);
+    expect(screen.getByText(`${gitHubInfo.text}`)).toBeInTheDocument();
+    expect(
+      screen.getByText(`/${gitHubInfo.year}/${gitHubInfo.schoolName}`)
+    ).toBeInTheDocument();
+    expect(await screen.findAllByRole('link')).toHaveLength(3);
+  });
 });

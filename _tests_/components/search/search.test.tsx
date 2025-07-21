@@ -6,14 +6,13 @@ import { localStorageSearchValueKey } from '../../../src/configs/localStorageCon
 
 const TEST_VALUE = 'test';
 const NEW_VALUE = 'new value';
+const mockDate = {
+  submitInput: vi.fn(),
+  generateError: vi.fn(),
+  hasError: false,
+};
 
 describe('search test', () => {
-  const mockDate = {
-    submitInput: vi.fn(),
-    generateError: vi.fn(),
-    hasError: false,
-  };
-
   test('loads and displays search', async () => {
     localStorage.setItem(localStorageSearchValueKey, TEST_VALUE);
     render(<Search {...mockDate} />);

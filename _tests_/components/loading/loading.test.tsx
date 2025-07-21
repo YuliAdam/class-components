@@ -1,8 +1,11 @@
 import { render, screen } from '@testing-library/react';
 import Loading from '../../../src/components/loading/Loading';
-import { expect, test } from 'vitest';
+import { describe, expect, test } from 'vitest';
+import '@testing-library/jest-dom';
 
-test('loads and displays header', async () => {
-  render(<Loading />);
-  expect(await screen.findAllByAltText('loading...')).toBeTruthy();
+describe('loading test', () => {
+  test('loads and displays loading', async () => {
+    render(<Loading />);
+    expect(await screen.findByAltText('loading...')).toBeInTheDocument();
+  });
 });
