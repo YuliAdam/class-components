@@ -16,7 +16,7 @@ describe('search test', () => {
 
   test('loads and displays search', async () => {
     localStorage.setItem(localStorageSearchValueKey, TEST_VALUE);
-    render(<Search {...mockDate} />).debug();
+    render(<Search {...mockDate} />);
     const btn = screen.getByText('Error Button');
     expect(btn).toBeInTheDocument();
     const input = screen.getByPlaceholderText('Search');

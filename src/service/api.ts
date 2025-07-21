@@ -6,7 +6,7 @@ export const requestOptions = {
   ability: 'ability',
 };
 
-function getUrlByRequestOption(option: string) {
+export function getUrlByRequestOption(option: string) {
   return option === requestOptions.pokemon
     ? pokemonUrl
     : option === requestOptions.type
