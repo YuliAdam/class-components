@@ -39,7 +39,7 @@ export default class Main extends React.Component {
 
   render() {
     return (
-      <main>
+      <>
         <Search
           submitInput={(text: string) => this.submitInput(text)}
           generateError={() => this.generateError()}
@@ -56,7 +56,7 @@ export default class Main extends React.Component {
           }
           backClick={() => this.removeError()}
         />
-      </main>
+      </>
     );
   }
 }
