@@ -1,4 +1,4 @@
-import React, { type ChangeEvent, type KeyboardEvent } from 'react';
+import { useState, type ChangeEvent, type KeyboardEvent } from 'react';
 import Input from './Input';
 import SearchIcon from '../../assets/img/searchIcon';
 import styles from './search.module.scss';
@@ -10,59 +10,50 @@ interface Props {
   generateError: () => void;
   hasError: boolean;
 }
-interface State {
-  value: string;
-}
-export default class Search extends React.Component<Props> {
-  state: State = {
-    value: getSearchValueFromLocalStorage(),
-  };
 
-  changeInput(e: ChangeEvent<HTMLInputElement>) {
+const initValue = getSearchValueFromLocalStorage();
+
+export default function Search(props: Props) {
+  const [value, setValue] = useState(initValue);
+
+  function changeInput(e: ChangeEvent<HTMLInputElement>) {
     if (e.target && e.target instanceof HTMLInputElement) {
       const text = e.target.value;
-      this.setState({ value: text });
+      setValue(text);
       if (!text.trim()) {
-        this.props.submitInput(text);
+        props.submitInput(text);
       }
     }
   }
 
-  keyDownInput(e: KeyboardEvent<HTMLInputElement>) {
+  function keyDownInput(e: KeyboardEvent<HTMLInputElement>) {
     if (e.target && e.target instanceof HTMLInputElement && e.key === 'Enter') {
       const text = e.target.value.trim();
-      this.props.submitInput(text);
-      this.setState({ value: text });
+      props.submitInput(text);
+      setValue(text);
     }
   }
 
-  render() {
-    return (
-      <section className={styles.search}>
-        <div className={styles.search_wrap}>
-          <Input
-            type="search"
-            id="search"
-            className={styles.input}
-            placeholder="Search"
-            value={this.state.value}
-            onChange={(e: ChangeEvent<HTMLInputElement>) => this.changeInput(e)}
-            onKeyDown={(e: KeyboardEvent<HTMLInputElement>) =>
-              this.keyDownInput(e)
-            }
-          />
-          <div>
-            <SearchIcon
-              className={styles.search_icon}
-              onClick={() => this.props.submitInput(this.state.value)}
-            />
-          </div>
-        </div>
-        <ErrorButton
-          onClick={this.props.generateError}
-          hasError={this.props.hasError}
+  return (
+    <section className={styles.search}>
+      <div className={styles.search_wrap}>
+        <Input
+          type="search"
+          id="search"
+          className={styles.input}
+          placeholder="Search"
+          value={value}
+          onChange={(e: ChangeEvent<HTMLInputElement>) => changeInput(e)}
+          onKeyDown={(e: KeyboardEvent<HTMLInputElement>) => keyDownInput(e)}
         />
-      </section>
-    );
-  }
+        <div>
+          <SearchIcon
+            className={styles.search_icon}
+            onClick={() => props.submitInput(value)}
+          />
+        </div>
+      </div>
+      <ErrorButton onClick={props.generateError} hasError={props.hasError} />
+    </section>
+  );
 }

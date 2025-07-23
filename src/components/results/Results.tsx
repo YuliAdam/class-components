@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from './results.module.scss';
 import {
   getAllRequest,
@@ -87,47 +87,51 @@ async function getPokemonByAbilityOrTypeRequest(searchStr: string) {
   }
 }
 
-export default class Results extends React.Component<Props> {
-  public state: State = {
-    items: [],
-    page: 0,
-    isSearchMood: false,
-    isLoading: true,
-  };
+const initState: State = {
+  items: [],
+  page: 0,
+  isSearchMood: false,
+  isLoading: true,
+};
 
-  setLoadingMood() {
-    this.setState({
+export default function Results(props: Props) {
+  const [state, setState] = useState(initState);
+
+  function setLoadingMood() {
+    setState({
       items: [],
-      page: this.state.page,
-      isSearchMood: this.state.isSearchMood,
+      page: state.page,
+      isSearchMood: state.isSearchMood,
       isLoading: true,
     });
   }
 
-  async componentDidMount() {
+  useEffect(() => {
     try {
       if (!getSearchValueFromLocalStorage()) {
-        this.setState({
-          items: await getPokemonRequest(this.state.page),
-          page: this.state.page,
-          isSearchMood: false,
-          isLoading: true,
+        getPokemonRequest(state.page).then((res) => {
+          setState({
+            items: res,
+            page: state.page,
+            isSearchMood: false,
+            isLoading: true,
+          });
         });
       } else {
-        await this.updateCards();
+        updateCards();
       }
     } catch {
-      this.props.generateError();
+      props.generateError();
     }
-  }
+  }, [props.searchValue]);
 
-  async updateCards() {
+  async function updateCards() {
     try {
-      this.setLoadingMood();
-      if (isValidRequestString(this.props.searchValue)) {
-        const pokemon = await getPokemonBySearchRequest(this.props.searchValue);
+      setLoadingMood();
+      if (isValidRequestString(props.searchValue)) {
+        const pokemon = await getPokemonBySearchRequest(props.searchValue);
         if (pokemon) {
-          this.setState({
+          setState({
             items: [pokemon],
             page: 0,
             isSearchMood: true,
@@ -135,16 +139,16 @@ export default class Results extends React.Component<Props> {
           });
         } else {
           const pokemonsByAbilityOrType =
-            await getPokemonByAbilityOrTypeRequest(this.props.searchValue);
+            await getPokemonByAbilityOrTypeRequest(props.searchValue);
           if (pokemonsByAbilityOrType) {
-            this.setState({
+            setState({
               items: pokemonsByAbilityOrType,
               page: 0,
               isSearchMood: true,
               isLoading: false,
             });
           } else {
-            this.setState({
+            setState({
               items: [],
               page: 0,
               isSearchMood: true,
@@ -153,7 +157,7 @@ export default class Results extends React.Component<Props> {
           }
         }
       } else {
-        this.setState({
+        setState({
           items: await getPokemonRequest(0),
           page: 0,
           isSearchMood: false,
@@ -161,38 +165,32 @@ export default class Results extends React.Component<Props> {
         });
       }
     } catch {
-      this.props.generateError();
+      props.generateError();
     }
   }
 
-  async componentDidUpdate(prevProps: Props) {
-    if (prevProps.searchValue !== this.props.searchValue) {
-      await this.updateCards();
-    }
-  }
-
-  prevClick = () => {
-    if (this.state.page) this.changePage(-1);
+  const prevClick = () => {
+    if (state.page) changePage(-1);
   };
 
-  nextClick = () => {
-    if (this.hasNextPage()) this.changePage(+1);
+  const nextClick = () => {
+    if (hasNextPage()) changePage(+1);
   };
 
-  async changePage(num: number) {
-    this.setLoadingMood();
-    if (!this.state.isSearchMood) {
-      this.setState({
-        items: await getPokemonRequest(this.state.page + num),
-        page: this.state.page + num,
+  async function changePage(num: number) {
+    setLoadingMood();
+    if (!state.isSearchMood) {
+      setState({
+        items: await getPokemonRequest(state.page + num),
+        page: state.page + num,
         isSearchMood: false,
         isLoading: false,
       });
     } else {
-      const copyItems = this.state.items.slice();
-      this.setLoadingMood();
+      const copyItems = state.items.slice();
+      setLoadingMood();
       setTimeout(() => {
-        this.setState((prevState: State) => ({
+        setState((prevState: State) => ({
           items: copyItems,
           page: prevState.page + num,
           isSearchMood: true,
@@ -202,55 +200,49 @@ export default class Results extends React.Component<Props> {
     }
   }
 
-  hasNextPage() {
-    return this.state.isSearchMood
-      ? this.state.items.length > ITEMS_AT_PAGE * (this.state.page + 1)
-      : this.state.items.length >= ITEMS_AT_PAGE;
+  function hasNextPage() {
+    return state.isSearchMood
+      ? state.items.length > ITEMS_AT_PAGE * (state.page + 1)
+      : state.items.length >= ITEMS_AT_PAGE;
   }
 
-  getPokemonCards() {
-    return this.state.items.map((item, i) => {
+  function getPokemonCards() {
+    return state.items.map((item, i) => {
       if (
-        this.state.items.length <= ITEMS_AT_PAGE ||
-        (i >= this.state.page * ITEMS_AT_PAGE &&
-          i < (this.state.page + 1) * ITEMS_AT_PAGE)
+        state.items.length <= ITEMS_AT_PAGE ||
+        (i >= state.page * ITEMS_AT_PAGE &&
+          i < (state.page + 1) * ITEMS_AT_PAGE)
       ) {
         return <PokemonCard key={item.name} pokemon={item} />;
       }
     });
   }
 
-  generateErrorIfHasError() {
-    if (this.props.hasError) {
+  function generateErrorIfHasError() {
+    if (props.hasError) {
       throw Error('Error');
     }
   }
 
-  render() {
-    this.generateErrorIfHasError();
-    return this.state.items.length !== 0 ? (
-      <>
-        <section
-          className={
-            this.state.items.length === 1 ? styles.result : styles.results
-          }
-          data-testid="pokemon card wrap"
-        >
-          {this.getPokemonCards()}
-        </section>
-        <Pagination
-          pageNum={this.state.page + 1}
-          prevClick={this.prevClick}
-          nextClick={this.nextClick}
-          hasNextPage={this.hasNextPage()}
-        />
-      </>
-    ) : this.state.isLoading ? (
-      <Loading />
-    ) : (
-      this.state.isSearchMood && (
-        <NotFound backClick={this.props.deleteSearch} />
-      )
-    );
-  }
+  return state.items.length !== 0 ? (
+    <>
+      {generateErrorIfHasError()}
+      <section
+        className={state.items.length === 1 ? styles.result : styles.results}
+        data-testid="pokemon card wrap"
+      >
+        {getPokemonCards()}
+      </section>
+      <Pagination
+        pageNum={state.page + 1}
+        prevClick={prevClick}
+        nextClick={nextClick}
+        hasNextPage={hasNextPage()}
+      />
+    </>
+  ) : state.isLoading ? (
+    <Loading />
+  ) : (
+    state.isSearchMood && <NotFound backClick={props.deleteSearch} />
+  );
 }

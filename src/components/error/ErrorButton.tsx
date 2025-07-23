@@ -1,4 +1,3 @@
-import React from 'react';
 import styles from './error.module.scss';
 
 interface Props {
@@ -6,15 +5,13 @@ interface Props {
   hasError: boolean;
 }
 
-export default class ErrorButton extends React.Component<Props> {
-  render() {
-    return (
-      <button
-        className={`${styles.error_button} ${this.props.hasError ? 'opacity' : ''}`}
-        onClick={this.props.onClick}
-      >
-        Error Button
-      </button>
-    );
-  }
+export default function ErrorButton(props: Props) {
+  return (
+    <button
+      className={`${styles.error_button} ${props.hasError ? 'opacity' : ''}`}
+      onClick={props.onClick}
+    >
+      Error Button
+    </button>
+  );
 }

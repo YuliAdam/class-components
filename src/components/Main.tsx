@@ -1,4 +1,4 @@
-import React from 'react';
+import { useState } from 'react';
 import Search from './search/Search';
 import Results from './results/Results';
 import {
@@ -7,56 +7,51 @@ import {
 } from '../localStorage/localStorage';
 import ErrorBoundary from './error/ErrorBoundary';
 
-interface State {
-  searchValue: string;
-  hasError: boolean;
-}
+const initState = {
+  searchValue: getSearchValueFromLocalStorage(),
+  hasError: false,
+};
 
-export default class Main extends React.Component {
-  state: State = {
-    searchValue: getSearchValueFromLocalStorage(),
-    hasError: false,
-  };
+export default function Main() {
+  const [state, setState] = useState(initState);
 
-  submitInput(text: string) {
-    this.setState({ searchValue: text.trim() });
+  function submitInput(text: string) {
+    setState({ searchValue: text.trim(), hasError: state.hasError });
     setSearchValueInLocalStorage(text.trim());
   }
 
-  generateError() {
-    this.setState({
-      searchValue: this.state.searchValue,
+  function generateError() {
+    setState({
+      searchValue: state.searchValue,
       hasError: true,
     });
   }
 
-  removeError() {
-    this.setState({
-      searchValue: this.state.searchValue,
+  function removeError() {
+    setState({
+      searchValue: state.searchValue,
       hasError: false,
     });
   }
 
-  render() {
-    return (
-      <>
-        <Search
-          submitInput={(text: string) => this.submitInput(text)}
-          generateError={() => this.generateError()}
-          hasError={this.state.hasError}
-        />
-        <ErrorBoundary
-          fallback={
-            <Results
-              searchValue={this.state.searchValue}
-              deleteSearch={() => this.submitInput('')}
-              hasError={this.state.hasError}
-              generateError={() => this.generateError()}
-            />
-          }
-          backClick={() => this.removeError()}
-        />
-      </>
-    );
-  }
+  return (
+    <>
+      <Search
+        submitInput={(text: string) => submitInput(text)}
+        generateError={() => generateError()}
+        hasError={state.hasError}
+      />
+      <ErrorBoundary
+        fallback={
+          <Results
+            searchValue={state.searchValue}
+            deleteSearch={() => submitInput('')}
+            hasError={state.hasError}
+            generateError={() => generateError()}
+          />
+        }
+        backClick={() => removeError()}
+      />
+    </>
+  );
 }
