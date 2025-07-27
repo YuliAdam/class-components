@@ -1,0 +1,33 @@
+@use '../../variables';
+.item {
+  position: fixed;
+  width: 50%;
+  max-width: 722px;
+  top: 230.6px;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  @media (max-width: 576px) {
+    position: static;
+  }
+  &_close {
+    background-color: transparent;
+    border: 1px solid variables.$glob_gray;
+    border-color: variables.$glob_gray;
+    border-radius: 10px;
+    margin: 5px;
+    padding: 5px 15px;
+    outline: none;
+    font-size: 20px;
+    &:hover {
+      cursor: pointer;
+      border-color: variables.$glob_black;
+    }
+  }
+}
+.double {
+  width: 270px !important;
+  height: 375px !important;
+  cursor: default !important;
+}

@@ -7,9 +7,8 @@ export const gitHubInfo = {
   text: '@YuliAdam',
   year: '2025',
   schoolName: 'RSchool',
+  courseLink: 'https://rs.school/courses/reactjs',
 };
-
-const COURSE_LINK = 'https://rs.school/courses/reactjs';
 
 export default function Footer() {
   return (
@@ -23,7 +22,7 @@ export default function Footer() {
       <p className={styles.footer_text}>
         /{gitHubInfo.year}/{gitHubInfo.schoolName}
       </p>
-      <a className={styles.footer_link} href={COURSE_LINK}>
+      <a className={styles.footer_link} href={gitHubInfo.courseLink}>
         <RSSchoolLogo className={styles.footer_RSSchool} />
       </a>
     </footer>

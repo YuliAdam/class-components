@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import styles from './results.module.scss';
 import {
   getAllRequest,
@@ -16,21 +16,19 @@ import PokemonCard from './PokemonCard';
 import Pagination from '../pagination/Pagination';
 import NotFound from '../notFound/NotFound';
 import isValidRequestString from '../../utils/isValidRequestString';
-import { getSearchValueFromLocalStorage } from '../../localStorage/localStorage';
 import Loading from '../loading/Loading';
+import { ItemContext, PageContext, SearchContext } from '../Main';
+import { useNavigate } from 'react-router';
+import { replacePathParams } from '../../utils/replacePathParams';
+import { PATH } from '../../configs/routesConfig';
+import useLocalStorage from '../../hooks/useLocalStorage';
+import { getSearchValueFromLocalStorage } from '../../localStorage/localStorage';
 
 interface State {
   items: IPokemon[];
   page: number;
   isSearchMood: boolean;
   isLoading: boolean;
-}
-
-interface Props {
-  searchValue: string;
-  deleteSearch: () => void;
-  hasError: boolean;
-  generateError: () => void;
 }
 
 export const ITEMS_AT_PAGE = 15;
@@ -94,8 +92,47 @@ const initState: State = {
   isLoading: true,
 };
 
-export default function Results(props: Props) {
+export default function Results() {
   const [state, setState] = useState(initState);
+  const [hasError, setError] = useState(false);
+  const search = useContext(SearchContext);
+  const page = useContext(PageContext);
+  const itemContext = useContext(ItemContext);
+  const navigate = useNavigate();
+  const localStorageState = useLocalStorage(
+    getSearchValueFromLocalStorage()
+  )[0] as string;
+
+  useEffect(() => {
+    try {
+      if (!getSearchValueFromLocalStorage()) {
+        getPokemonRequest(0).then((res) => {
+          setState({
+            items: res,
+            page: 0,
+            isSearchMood: false,
+            isLoading: true,
+          });
+        });
+        navigate(replacePathParams(PATH.page, { page: '1' }));
+      } else {
+        updateCards();
+        navigate(
+          replacePathParams(PATH.searchParam, {
+            page: '1',
+            searchParam: search?.value,
+          })
+        );
+      }
+    } catch (err) {
+      if (err instanceof Error) generateError(err.message);
+    }
+  }, [search?.value, localStorageState]);
+
+  function generateError(message: string) {
+    console.log(message);
+    setError(true);
+  }
 
   function setLoadingMood() {
     setState({
@@ -106,30 +143,11 @@ export default function Results(props: Props) {
     });
   }
 
-  useEffect(() => {
-    try {
-      if (!getSearchValueFromLocalStorage()) {
-        getPokemonRequest(state.page).then((res) => {
-          setState({
-            items: res,
-            page: state.page,
-            isSearchMood: false,
-            isLoading: true,
-          });
-        });
-      } else {
-        updateCards();
-      }
-    } catch {
-      props.generateError();
-    }
-  }, [props.searchValue]);
-
   async function updateCards() {
     try {
       setLoadingMood();
-      if (isValidRequestString(props.searchValue)) {
-        const pokemon = await getPokemonBySearchRequest(props.searchValue);
+      if (isValidRequestString(search?.value || '')) {
+        const pokemon = await getPokemonBySearchRequest(search?.value || '');
         if (pokemon) {
           setState({
             items: [pokemon],
@@ -139,7 +157,7 @@ export default function Results(props: Props) {
           });
         } else {
           const pokemonsByAbilityOrType =
-            await getPokemonByAbilityOrTypeRequest(props.searchValue);
+            await getPokemonByAbilityOrTypeRequest(search?.value || '');
           if (pokemonsByAbilityOrType) {
             setState({
               items: pokemonsByAbilityOrType,
@@ -155,6 +173,7 @@ export default function Results(props: Props) {
               isLoading: false,
             });
           }
+          page?.setValue(0);
         }
       } else {
         setState({
@@ -164,8 +183,8 @@ export default function Results(props: Props) {
           isLoading: false,
         });
       }
-    } catch {
-      props.generateError();
+    } catch (err) {
+      if (err instanceof Error) generateError(err.message);
     }
   }
 
@@ -178,8 +197,15 @@ export default function Results(props: Props) {
   };
 
   async function changePage(num: number) {
+    itemContext?.setValue(null);
     setLoadingMood();
+    page?.setValue(state.page + 1 + num);
     if (!state.isSearchMood) {
+      navigate(
+        replacePathParams(PATH.page, {
+          page: (state.page + 1 + num).toString(),
+        })
+      );
       setState({
         items: await getPokemonRequest(state.page + num),
         page: state.page + num,
@@ -187,6 +213,12 @@ export default function Results(props: Props) {
         isLoading: false,
       });
     } else {
+      navigate(
+        replacePathParams(PATH.searchParam, {
+          page: (state.page + 1 + num).toString(),
+          searchParam: search?.value,
+        })
+      );
       const copyItems = state.items.slice();
       setLoadingMood();
       setTimeout(() => {
@@ -213,13 +245,30 @@ export default function Results(props: Props) {
         (i >= state.page * ITEMS_AT_PAGE &&
           i < (state.page + 1) * ITEMS_AT_PAGE)
       ) {
-        return <PokemonCard key={item.name} pokemon={item} />;
+        return (
+          <PokemonCard
+            key={item.name}
+            pokemon={item}
+            onClick={() => selectItem(item)}
+          />
+        );
       }
     });
   }
+  function selectItem(item: IPokemon) {
+    itemContext?.setValue(item);
+    navigate(
+      replacePathParams(PATH.searchItem, {
+        page: (state.page + 1).toString(),
+        searchParam: search?.value || '',
+        item: item.name,
+      })
+    );
+    console.log(item);
+  }
 
   function generateErrorIfHasError() {
-    if (props.hasError) {
+    if (hasError) {
       throw Error('Error');
     }
   }
@@ -228,7 +277,13 @@ export default function Results(props: Props) {
     <>
       {generateErrorIfHasError()}
       <section
-        className={state.items.length === 1 ? styles.result : styles.results}
+        className={
+          state.items.length === 1
+            ? styles.result
+            : itemContext?.value
+              ? styles.results_half
+              : styles.results
+        }
         data-testid="pokemon card wrap"
       >
         {getPokemonCards()}
@@ -243,6 +298,6 @@ export default function Results(props: Props) {
   ) : state.isLoading ? (
     <Loading />
   ) : (
-    state.isSearchMood && <NotFound backClick={props.deleteSearch} />
+    state.isSearchMood && <NotFound />
   );
 }

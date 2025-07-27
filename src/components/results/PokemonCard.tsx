@@ -6,13 +6,19 @@ import getRandomColor from '../../utils/getRandomColor';
 
 interface Props {
   pokemon: IPokemon;
+  onClick: (item: IPokemon) => void;
+  className?: string;
 }
 
 export default function PokemonCard(props: Props) {
   const [color, setColor] = useState('');
   useEffect(() => setColor(getRandomColor()), []);
   return (
-    <div className={styles.pokemon} style={{ backgroundColor: color }}>
+    <div
+      className={`${styles.pokemon} ${props.className || ''}`}
+      style={{ backgroundColor: color }}
+      onClick={() => props.onClick(props.pokemon)}
+    >
       <h1 className={styles.pokemon_title}>
         {capitalizeFirstLetter(props.pokemon.name)}
       </h1>

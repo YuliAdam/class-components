@@ -1,13 +1,24 @@
+import { useContext } from 'react';
 import Pokeball from '../../assets/img/pokeball.svg';
 import styles from './notFound.module.scss';
-
-interface Props {
-  backClick: () => void;
-}
+import { SearchContext } from '../Main';
+import { setSearchValueInLocalStorage } from '../../localStorage/localStorage';
+import { useNavigate } from 'react-router';
+import { PATH } from '../../configs/routesConfig';
 
 export const NOT_FOUND_MESSAGE = 'Pokemon not found';
 
-export default function NotFound(props: Props) {
+export default function NotFound() {
+  const setSearch = useContext(SearchContext)?.setValue;
+  const navigate = useNavigate();
+
+  function backClick() {
+    if (setSearch) {
+      setSearch('');
+      setSearchValueInLocalStorage('');
+      navigate(PATH.empty);
+    }
+  }
   return (
     <section className={styles.not_found}>
       <div className={styles.not_found_wrap}>
@@ -16,7 +27,7 @@ export default function NotFound(props: Props) {
         <span className={styles.not_found_text}>4</span>
       </div>
       <p className={styles.not_found_info}>{NOT_FOUND_MESSAGE}</p>
-      <button className={styles.not_found_btn} onClick={props.backClick}>
+      <button className={styles.not_found_btn} onClick={backClick}>
         Back
       </button>
     </section>

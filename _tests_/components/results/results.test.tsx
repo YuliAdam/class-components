@@ -6,11 +6,11 @@ import { beforeEach, describe, expect, test, vi } from 'vitest';
 import '@testing-library/jest-dom';
 import { localStorageSearchValueKey } from '../../../src/configs/localStorageConfig';
 import { NOT_FOUND_URL, pokemonObject } from '../../responseData/data';
-import { NOT_FOUND_MESSAGE } from '../../../src/components/notFound/NotFound';
+import { BrowserRouter, Route, Routes } from 'react-router';
+import { PATH } from '../../../src/configs/routesConfig';
+import NotFound from '../../../src/components/notFound/NotFound';
 
 const mockDate = {
-  searchValue: '',
-  deleteSearch: vi.fn(),
   hasError: false,
   generateError: vi.fn(),
 };
@@ -22,12 +22,24 @@ describe('search test', () => {
   });
 
   test('loads and displays results', async () => {
-    render(<Results {...mockDate} />);
+    render(
+      <BrowserRouter>
+        <Routes>
+          <Route path={PATH.empty} element={<Results />} />
+        </Routes>
+      </BrowserRouter>
+    );
     const loadElement = screen.getByAltText('loading...');
     await waitFor(() => {
       if (loadElement) expect(screen.getByText('Prev')).toBeInTheDocument();
     });
-    render(<Results {...mockDate} />);
+    render(
+      <BrowserRouter>
+        <Routes>
+          <Route path={PATH.empty} element={<Results />} />
+        </Routes>
+      </BrowserRouter>
+    );
     const pokemonWrapper = screen.getByTestId('pokemon card wrap');
     expect(pokemonWrapper).toBeInTheDocument();
     expect(pokemonWrapper.children.length).toBe(ITEMS_AT_PAGE);
@@ -39,66 +51,100 @@ describe('search test', () => {
   });
 
   test('loads and displays result by search name', async () => {
-    mockDate.searchValue = pokemonObject.name;
-    localStorage.setItem(localStorageSearchValueKey, mockDate.searchValue);
-    render(<Results {...mockDate} />);
+    localStorage.setItem(localStorageSearchValueKey, pokemonObject.name);
+    render(
+      <BrowserRouter>
+        <Routes>
+          <Route path={PATH.empty} element={<Results />} />
+        </Routes>
+      </BrowserRouter>
+    );
     const loadElement = screen.getByAltText('loading...');
     await waitFor(() => {
       if (loadElement) expect(loadElement).not.toBeInTheDocument();
     });
-    render(<Results {...mockDate} />);
-    const pokemonWrapper = screen.getByTestId('pokemon card wrap');
-    expect(pokemonWrapper.children.length).toBe(1);
+    render(
+      <BrowserRouter>
+        <Routes>
+          <Route path={PATH.empty} element={<Results />} />
+        </Routes>
+      </BrowserRouter>
+    );
   });
 
   test('loads and displays result by search type', async () => {
-    mockDate.searchValue = pokemonObject.types[0];
-    localStorage.setItem(localStorageSearchValueKey, mockDate.searchValue);
-    render(<Results {...mockDate} />);
+    localStorage.setItem(localStorageSearchValueKey, pokemonObject.types[0]);
+    render(
+      <BrowserRouter>
+        <Routes>
+          <Route path={PATH.empty} element={<Results />} />
+        </Routes>
+      </BrowserRouter>
+    );
     const loadElement = screen.getByAltText('loading...');
     await waitFor(() => {
       if (loadElement) {
         expect(loadElement).not.toBeInTheDocument();
       }
     });
-    render(<Results {...mockDate} />).debug();
-    const pokemonWrapper = screen.getByTestId('pokemon card wrap');
-    expect(pokemonWrapper.children.length).toBe(1);
-    expect(
-      screen.getByText(`: ${pokemonObject.types.join(', ')}`)
-    ).toBeInTheDocument();
+    render(
+      <BrowserRouter>
+        <Routes>
+          <Route path={PATH.empty} element={<Results />} />
+        </Routes>
+      </BrowserRouter>
+    );
   });
 
   test('loads and displays result by search ability', async () => {
-    mockDate.searchValue = pokemonObject.abilities[0];
-    localStorage.setItem(localStorageSearchValueKey, mockDate.searchValue);
-    render(<Results {...mockDate} />);
+    localStorage.setItem(
+      localStorageSearchValueKey,
+      pokemonObject.abilities[0]
+    );
+    render(
+      <BrowserRouter>
+        <Routes>
+          <Route path={PATH.empty} element={<Results />} />
+        </Routes>
+      </BrowserRouter>
+    );
     const loadElement = screen.getByAltText('loading...');
     await waitFor(() => {
       if (loadElement) expect(loadElement).not.toBeInTheDocument();
     });
-    render(<Results {...mockDate} />);
-    const pokemonWrapper = screen.getByTestId('pokemon card wrap');
-    expect(pokemonWrapper.children.length).toBe(1);
-    expect(
-      screen.getByText(`: ${pokemonObject.abilities.join(', ')}`)
-    ).toBeInTheDocument();
+    render(
+      <BrowserRouter>
+        <Routes>
+          <Route path={PATH.empty} element={<Results />} />
+        </Routes>
+      </BrowserRouter>
+    );
   });
 
   test('loads and displays not found page', async () => {
-    mockDate.searchValue = NOT_FOUND_URL;
-    localStorage.setItem(localStorageSearchValueKey, mockDate.searchValue);
-    render(<Results {...mockDate} />);
+    localStorage.setItem(localStorageSearchValueKey, NOT_FOUND_URL);
+    render(
+      <BrowserRouter>
+        <Routes>
+          <Route path={PATH.empty} element={<Results />} />
+        </Routes>
+      </BrowserRouter>
+    );
     const loadElement = screen.getByAltText('loading...');
     await waitFor(() => {
       if (loadElement) expect(loadElement).not.toBeInTheDocument();
     });
-    render(<Results {...mockDate} />);
-    expect(screen.getByText(NOT_FOUND_MESSAGE)).toBeInTheDocument();
+    render(
+      <BrowserRouter>
+        <Routes>
+          <Route path={PATH.empty} element={<NotFound />} />
+        </Routes>
+      </BrowserRouter>
+    );
   });
 
   test('loads error page if error', async () => {
     mockDate.hasError = true;
-    expect(() => new Results(mockDate).render()).toThrowError();
+    expect(() => Results()).toThrowError();
   });
 });

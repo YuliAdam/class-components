@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">96.42% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>20/20</span>
+                <span class='fraction'>27/28</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">66.66% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>1/1</span>
+                <span class='fraction'>2/3</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>1/1</span>
+                <span class='fraction'>2/2</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">96.42% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>20/20</span>
+                <span class='fraction'>27/28</span>
             </div>
         
             
@@ -90,59 +90,86 @@
 <a name='L25'></a><a href='#L25'>25</a>
 <a name='L26'></a><a href='#L26'>26</a>
 <a name='L27'></a><a href='#L27'>27</a>
-<a name='L28'></a><a href='#L28'>28</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<a name='L28'></a><a href='#L28'>28</a>
+<a name='L29'></a><a href='#L29'>29</a>
+<a name='L30'></a><a href='#L30'>30</a>
+<a name='L31'></a><a href='#L31'>31</a>
+<a name='L32'></a><a href='#L32'>32</a>
+<a name='L33'></a><a href='#L33'>33</a>
+<a name='L34'></a><a href='#L34'>34</a>
+<a name='L35'></a><a href='#L35'>35</a>
+<a name='L36'></a><a href='#L36'>36</a>
+<a name='L37'></a><a href='#L37'>37</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import React from 'react';
-import styles from '../notFound/notFound.module.scss';
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import styles from '../notFound/notFound.module.scss';
 import Pokeball from '../../assets/img/pokeball.svg';
+import { useNavigate } from 'react-router';
+import { PATH } from '../../configs/routesConfig';
 &nbsp;
 interface Props {
-  backClick: () =&gt; void;
+  backClick?: () =&gt; void;
+  text?: string;
 }
+const ERROR_TEXT = 'Sorry.. there was an error';
 &nbsp;
-export default class ErrorContent extends React.Component&lt;Props&gt; {
-  render() {
-    return (
-      &lt;section className={styles.not_found}&gt;
-        &lt;div className={styles.not_found_wrap}&gt;
-          &lt;span className={styles.not_found_text}&gt;E&lt;/span&gt;
-          &lt;span className={styles.not_found_text}&gt;R&lt;/span&gt;
-          &lt;span className={styles.not_found_text}&gt;R&lt;/span&gt;
-          &lt;img className={styles.not_found_img} src={Pokeball} alt="pokeball" /&gt;
-          &lt;span className={styles.not_found_text}&gt;R&lt;/span&gt;
-        &lt;/div&gt;
-        &lt;p className={styles.not_found_info}&gt;Sorry.. there was an error&lt;/p&gt;
-        &lt;button className={styles.not_found_btn} onClick={this.props.backClick}&gt;
-          Back
-        &lt;/button&gt;
-      &lt;/section&gt;
-    );
-  }
+export default function ErrorContent(props: Props) {
+  const navigate = useNavigate();
+  return (
+    &lt;section className={styles.not_found}&gt;
+      &lt;div className={styles.not_found_wrap}&gt;
+        &lt;span className={styles.not_found_text}&gt;E&lt;/span&gt;
+        &lt;span className={styles.not_found_text}&gt;R&lt;/span&gt;
+        &lt;span className={styles.not_found_text}&gt;R&lt;/span&gt;
+        &lt;img className={styles.not_found_img} src={Pokeball} alt="pokeball" /&gt;
+        &lt;span className={styles.not_found_text}&gt;R&lt;/span&gt;
+      &lt;/div&gt;
+      &lt;p className={styles.not_found_info}&gt;{props.text || ERROR_TEXT}&lt;/p&gt;
+      &lt;button
+        className={styles.not_found_btn}
+        onClick={() =&gt; {
+          props.backClick
+            ? props.backClick(<span class="branch-0 cbranch-no" title="branch not covered" >)</span>
+<span class="cstat-no" title="statement not covered" >            : navigate(PATH.empty.replace(':num', '1'));</span>
+        }}
+      &gt;
+        Back
+      &lt;/button&gt;
+    &lt;/section&gt;
+  );
 }
 &nbsp;</pre></td></tr></table></pre>
 
@@ -151,7 +178,7 @@ export default class ErrorContent extends React.Component&lt;Props&gt; {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-07-21T21:17:56.337Z
+                at 2025-07-27T17:41:00.193Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>
