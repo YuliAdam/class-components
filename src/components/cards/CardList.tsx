@@ -265,8 +265,14 @@ export default function CardList() {
       }
     });
   }
-  function selectItem(item: IPokemon) {
-    itemContext?.setValue(item);
+  async function selectItem(item: IPokemon) {
+    itemContext?.setValue({
+      abilities: [],
+      name: '',
+      img: '',
+      types: [],
+      color: '',
+    });
     navigate(
       replacePathParams(PATH.itemParams, {
         page: (state.page + 1).toString(),
@@ -275,6 +281,8 @@ export default function CardList() {
       }),
       { replace: true }
     );
+    const pokemon = await getPokemonBySearchRequest(item.name);
+    itemContext?.setValue(pokemon);
   }
 
   function generateErrorIfHasError() {
