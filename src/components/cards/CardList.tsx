@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
-import styles from './results.module.scss';
+import styles from './card.module.scss';
 import {
   getAllRequest,
   getByNameOrIndexRequest,
@@ -14,15 +14,15 @@ import type {
 } from '../../types/types';
 import PokemonCard from './PokemonCard';
 import Pagination from '../pagination/Pagination';
-import NotFound from '../notFound/NotFound';
 import isValidRequestString from '../../utils/isValidRequestString';
 import Loading from '../loading/Loading';
-import { ItemContext, PageContext, SearchContext } from '../Main';
+import { ItemContext, PageContext, SearchContext } from '../../pages/Main';
 import { useNavigate } from 'react-router';
 import { replacePathParams } from '../../utils/replacePathParams';
 import { PATH } from '../../configs/routesConfig';
 import useLocalStorage from '../../hooks/useLocalStorage';
 import { getSearchValueFromLocalStorage } from '../../localStorage/localStorage';
+import getColor from '../../utils/getColor';
 
 interface State {
   items: IPokemon[];
@@ -47,6 +47,7 @@ function getPokemonObj(pokemon: IPokemonResponse) {
         (item: { type: IObjectInfoResponse }) => item.type.name
       ),
     ],
+    color: getColor(pokemon.height, pokemon.base_experience, pokemon.weight),
   };
 }
 
@@ -92,16 +93,14 @@ const initState: State = {
   isLoading: true,
 };
 
-export default function Results() {
+export default function CardList() {
   const [state, setState] = useState(initState);
   const [hasError, setError] = useState(false);
   const search = useContext(SearchContext);
   const page = useContext(PageContext);
   const itemContext = useContext(ItemContext);
   const navigate = useNavigate();
-  const localStorageState = useLocalStorage(
-    getSearchValueFromLocalStorage()
-  )[0] as string;
+  const localStorageState = useLocalStorage()[0];
 
   useEffect(() => {
     try {
@@ -111,17 +110,20 @@ export default function Results() {
             items: res,
             page: 0,
             isSearchMood: false,
-            isLoading: true,
+            isLoading: false,
           });
         });
-        navigate(replacePathParams(PATH.page, { page: '1' }));
+        navigate(replacePathParams(PATH.pokemonParams, { page: '1' }), {
+          replace: true,
+        });
       } else {
         updateCards();
         navigate(
-          replacePathParams(PATH.searchParam, {
+          replacePathParams(PATH.pokemonParams, {
             page: '1',
             searchParam: search?.value,
-          })
+          }),
+          { replace: true }
         );
       }
     } catch (err) {
@@ -172,6 +174,12 @@ export default function Results() {
               isSearchMood: true,
               isLoading: false,
             });
+            navigate(
+              replacePathParams(PATH.pokemonNotFoundParams, {
+                searchParam: search?.value || '',
+              }),
+              { replace: true }
+            );
           }
           page?.setValue(0);
         }
@@ -202,9 +210,10 @@ export default function Results() {
     page?.setValue(state.page + 1 + num);
     if (!state.isSearchMood) {
       navigate(
-        replacePathParams(PATH.page, {
+        replacePathParams(PATH.pokemonParams, {
           page: (state.page + 1 + num).toString(),
-        })
+        }),
+        { replace: true }
       );
       setState({
         items: await getPokemonRequest(state.page + num),
@@ -214,10 +223,11 @@ export default function Results() {
       });
     } else {
       navigate(
-        replacePathParams(PATH.searchParam, {
+        replacePathParams(PATH.pokemonParams, {
           page: (state.page + 1 + num).toString(),
           searchParam: search?.value,
-        })
+        }),
+        { replace: true }
       );
       const copyItems = state.items.slice();
       setLoadingMood();
@@ -258,13 +268,13 @@ export default function Results() {
   function selectItem(item: IPokemon) {
     itemContext?.setValue(item);
     navigate(
-      replacePathParams(PATH.searchItem, {
+      replacePathParams(PATH.itemParams, {
         page: (state.page + 1).toString(),
         searchParam: search?.value || '',
         item: item.name,
-      })
+      }),
+      { replace: true }
     );
-    console.log(item);
   }
 
   function generateErrorIfHasError() {
@@ -273,7 +283,9 @@ export default function Results() {
     }
   }
 
-  return state.items.length !== 0 ? (
+  return state.isLoading ? (
+    <Loading />
+  ) : (
     <>
       {generateErrorIfHasError()}
       <section
@@ -295,9 +307,5 @@ export default function Results() {
         hasNextPage={hasNextPage()}
       />
     </>
-  ) : state.isLoading ? (
-    <Loading />
-  ) : (
-    state.isSearchMood && <NotFound />
   );
 }

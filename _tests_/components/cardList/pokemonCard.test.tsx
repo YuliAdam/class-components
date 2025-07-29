@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import PokemonCard from '../../../src/components/results/PokemonCard';
+import PokemonCard from '../../../src/components/cards/PokemonCard';
 import { describe, expect, test, vi } from 'vitest';
 import capitalizeFirstLetter from '../../../src/utils/capitalizeFirstLetter';
 import '@testing-library/jest-dom';
@@ -11,6 +11,7 @@ const mockDate = {
     name: pokemonObject.name,
     img: pokemonObject.img,
     types: pokemonObject.types,
+    color: 'white',
   },
   onClick: vi.fn(),
 };

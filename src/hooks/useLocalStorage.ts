@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, type Dispatch, type SetStateAction } from 'react';
 import {
   getSearchValueFromLocalStorage,
   setSearchValueInLocalStorage,
@@ -6,16 +6,17 @@ import {
 
 type DispatchAction = string | ((prevState: string) => string);
 
-export default function useLocalStorage(initialValue: string) {
-  const [value, setValue] = useState(() => {
-    const data = getSearchValueFromLocalStorage();
-    return data || initialValue;
-  });
+export default function useLocalStorage(
+  initialValue: string = ''
+): [string | null, Dispatch<SetStateAction<string>>] {
+  const [value, setValue] = useState(
+    getSearchValueFromLocalStorage() || initialValue
+  );
 
   function handleDispatch(action: DispatchAction) {
     if (typeof action === 'function') {
       setValue((prevState) => {
-        const newValue = (action as (prevState: string) => string)(prevState);
+        const newValue = action(prevState);
         setSearchValueInLocalStorage(newValue);
         return newValue;
       });

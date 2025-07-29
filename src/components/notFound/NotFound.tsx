@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import Pokeball from '../../assets/img/pokeball.svg';
 import styles from './notFound.module.scss';
-import { SearchContext } from '../Main';
+import { SearchContext } from '../../pages/Main';
 import { setSearchValueInLocalStorage } from '../../localStorage/localStorage';
 import { useNavigate } from 'react-router';
 import { PATH } from '../../configs/routesConfig';

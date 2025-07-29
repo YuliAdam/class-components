@@ -3,7 +3,8 @@ import { lazy } from 'react';
 import { createBrowserRouter, Link } from 'react-router-dom';
 import { Layout } from '../layout/layout';
 import ErrorContent from '../components/error/ErrorContent';
-import About from '../components/about/About';
+import Main from '../pages/Main';
+import Results from '../pages/Results';
 
 export const router = createBrowserRouter([
   {
@@ -17,29 +18,33 @@ export const router = createBrowserRouter([
     children: [
       {
         path: PATH.empty,
-        Component: lazy(() => import('../components/Main')),
-      },
-      {
-        path: PATH.page,
-        Component: lazy(() => import('../components/Main')),
-        children: [
-          {
-            path: PATH.searchParam,
-            Component: lazy(() => import('../components/Main')),
-          },
-          {
-            path: PATH.item,
-            Component: lazy(() => import('../components/Main')),
-          },
-          {
-            path: PATH.searchItem,
-            Component: lazy(() => import('../components/Main')),
-          },
-        ],
+        Component: lazy(() => import('../pages/Results')),
       },
       {
         path: PATH.about,
-        element: <About />,
+        Component: lazy(() => import('../components/about/About')),
+      },
+      {
+        element: <Main />,
+        children: [
+          {
+            element: <Results />,
+            children: [
+              {
+                path: PATH.pokemon,
+                element: null,
+              },
+              {
+                path: PATH.item,
+                Component: lazy(() => import('../pages/SelectPokemon')),
+              },
+            ],
+          },
+          {
+            path: PATH.pokemonNotFound,
+            Component: lazy(() => import('../pages/PokemonNotFound')),
+          },
+        ],
       },
       {
         path: PATH.notFound,

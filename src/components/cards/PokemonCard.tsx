@@ -1,8 +1,6 @@
-import { useEffect, useState } from 'react';
-import styles from './results.module.scss';
+import styles from './card.module.scss';
 import type { IPokemon } from '../../types/types';
 import capitalizeFirstLetter from '../../utils/capitalizeFirstLetter';
-import getRandomColor from '../../utils/getRandomColor';
 
 interface Props {
   pokemon: IPokemon;
@@ -11,12 +9,10 @@ interface Props {
 }
 
 export default function PokemonCard(props: Props) {
-  const [color, setColor] = useState('');
-  useEffect(() => setColor(getRandomColor()), []);
   return (
     <div
       className={`${styles.pokemon} ${props.className || ''}`}
-      style={{ backgroundColor: color }}
+      style={{ backgroundColor: props.pokemon.color }}
       onClick={() => props.onClick(props.pokemon)}
     >
       <h1 className={styles.pokemon_title}>

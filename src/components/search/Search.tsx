@@ -8,15 +8,11 @@ import {
 import Input from './Input';
 import SearchIcon from '../../assets/img/searchIcon';
 import styles from './search.module.scss';
-import { ItemContext, PageContext, SearchContext } from '../Main';
+import { ItemContext, PageContext, SearchContext } from '../../pages/Main';
 import { Link, useNavigate } from 'react-router';
 import { PATH } from '../../configs/routesConfig';
 import { replacePathParams } from '../../utils/replacePathParams';
 import useLocalStorage from '../../hooks/useLocalStorage';
-import {
-  getSearchValueFromLocalStorage,
-  setSearchValueInLocalStorage,
-} from '../../localStorage/localStorage';
 
 export default function Search() {
   const search = useContext(SearchContext);
@@ -24,9 +20,7 @@ export default function Search() {
   const [value, setValue] = useState(search?.value || '');
   const navigate = useNavigate();
   const item = useContext(ItemContext);
-  const setLocalStorage = useLocalStorage(
-    getSearchValueFromLocalStorage()
-  )[1] as (action: string) => void;
+  const setLocalStorage = useLocalStorage()[1];
 
   useEffect(() => setValue(search?.value || ''), [search?.value]);
 
@@ -34,7 +28,6 @@ export default function Search() {
     search?.setValue(text.trim());
     setValue(text.trim());
     setLocalStorage(text.trim());
-    setSearchValueInLocalStorage(text.trim());
     page?.setValue(0);
     item?.setValue(null);
   }
@@ -45,7 +38,9 @@ export default function Search() {
       setValue(text);
       if (!text.trim()) {
         submitInput(text);
-        navigate(replacePathParams(PATH.page, { page: '1' }));
+        navigate(replacePathParams(PATH.pokemonParams, { page: '1' }), {
+          replace: true,
+        });
       }
     }
   }
@@ -55,7 +50,8 @@ export default function Search() {
       const text = e.target.value.trim();
       submitInput(text);
       navigate(
-        replacePathParams(PATH.searchParam, { page: '1', searchParam: text })
+        replacePathParams(PATH.pokemonParams, { page: '1', searchParam: text }),
+        { replace: true }
       );
     }
   }
@@ -75,11 +71,12 @@ export default function Search() {
         <Link
           to={
             value &&
-            replacePathParams(PATH.searchParam, {
+            replacePathParams(PATH.pokemonParams, {
               page: '1',
               searchParam: value,
             })
           }
+          replace
         >
           <SearchIcon
             className={styles.search_icon}

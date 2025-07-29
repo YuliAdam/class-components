@@ -1,13 +1,10 @@
-import React, { useState } from 'react';
-import Search from './search/Search';
-import Results from './results/Results';
+import React, { Suspense, useState } from 'react';
 import { getSearchValueFromLocalStorage } from '../localStorage/localStorage';
-import ErrorBoundary from './error/ErrorBoundary';
 import type { IPokemon } from '../types/types';
-import styles from './main.module.scss';
-import Item from './item/Item';
-import { useNavigate } from 'react-router';
+import styles from './pages.module.scss';
+import { Link, Outlet } from 'react-router';
 import { PATH } from '../configs/routesConfig';
+import Loading from '../components/loading/Loading';
 
 interface ISearchContext {
   value: string;
@@ -38,30 +35,18 @@ export default function Main() {
   );
   const [page, setPage] = useState(0);
   const [item, setItem] = useState<IPokemon | null>(null);
-  const navigate = useNavigate();
   return (
     <SearchContext.Provider
       value={{ value: searchValue, setValue: setSearchValue }}
     >
       <PageContext.Provider value={{ value: page, setValue: setPage }}>
         <ItemContext.Provider value={{ value: item, setValue: setItem }}>
-          <div className={item ? styles.container : ''}>
-            <div className={item ? styles.container_main : ''}>
-              <button
-                className={styles.about}
-                onClick={() => navigate(PATH.about)}
-              >
-                About
-              </button>
-              <Search />
-              <ErrorBoundary fallback={<Results />} />
-            </div>
-            {item && (
-              <div className={styles.container_item}>
-                <Item />
-              </div>
-            )}
-          </div>
+          <Link to={PATH.about}>
+            <div className={styles.about}>About</div>
+          </Link>
+          <Suspense fallback={<Loading />}>
+            <Outlet />
+          </Suspense>
         </ItemContext.Provider>
       </PageContext.Provider>
     </SearchContext.Provider>

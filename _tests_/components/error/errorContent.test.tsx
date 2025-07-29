@@ -3,8 +3,7 @@ import { userEvent } from '@testing-library/user-event';
 import ErrorContent from '../../../src/components/error/ErrorContent';
 import { describe, expect, test, vi } from 'vitest';
 import '@testing-library/jest-dom';
-import { BrowserRouter, Route, Routes } from 'react-router';
-import { PATH } from '../../../src/configs/routesConfig';
+import { MemoryRouter } from 'react-router';
 
 const mockDate = {
   backClick: vi.fn(),
@@ -13,16 +12,10 @@ const mockDate = {
 describe('error content test', () => {
   test('loads and displays error button', async () => {
     render(
-      <BrowserRouter>
-        <Routes>
-          <Route
-            path={PATH.notFound}
-            element={<ErrorContent {...mockDate} />}
-          />
-        </Routes>
-      </BrowserRouter>
+      <MemoryRouter>
+        <ErrorContent {...mockDate} />
+      </MemoryRouter>
     );
-
     const btn = screen.getByText('Back');
     expect(btn).toBeInTheDocument();
     await userEvent.click(btn);

@@ -15,6 +15,9 @@ export interface IPokemonResponse {
   name: string;
   sprites: { front_default: string };
   types: { type: IObjectInfoResponse }[];
+  base_experience: number;
+  height: number;
+  weight: number;
 }
 
 export interface IPokemon {
@@ -22,6 +25,7 @@ export interface IPokemon {
   name: string;
   img: string;
   types: string[];
+  color: string;
 }
 
 export interface IAbilityOrTypeResponse {

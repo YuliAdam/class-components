@@ -3,8 +3,7 @@ import ErrorBoundary from '../../../src/components/error/ErrorBoundary';
 import { describe, expect, test, vi } from 'vitest';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
-import { BrowserRouter, Route, Routes } from 'react-router';
-import { PATH } from '../../../src/configs/routesConfig';
+import { MemoryRouter } from 'react-router';
 
 const testMainFallback = <div>Main content</div>;
 const mockDate = {
@@ -27,35 +26,25 @@ const errorMockDate = {
 describe('error boundary test', () => {
   test('loads and displays main content', async () => {
     render(
-      <BrowserRouter>
-        <Routes>
-          <Route path={PATH.empty} element={<ErrorBoundary {...mockDate} />} />
-        </Routes>
-      </BrowserRouter>
+      <MemoryRouter>
+        <ErrorBoundary {...mockDate} />
+      </MemoryRouter>
     );
     expect(screen.getByText('Main content')).toBeInTheDocument();
   });
   test('loads and displays error content', async () => {
     render(
-      <BrowserRouter>
-        <Routes>
-          <Route
-            path={PATH.notFound}
-            element={<ErrorBoundary {...errorMockDate} />}
-          />
-        </Routes>
-      </BrowserRouter>
+      <MemoryRouter>
+        <ErrorBoundary {...errorMockDate} />
+      </MemoryRouter>
     );
     expect(screen.getByText('Sorry.. there was an error')).toBeTruthy();
     userEvent.click(screen.getByText('Back'));
     cleanup();
-
     render(
-      <BrowserRouter>
-        <Routes>
-          <Route path={PATH.empty} element={<ErrorBoundary {...mockDate} />} />
-        </Routes>
-      </BrowserRouter>
+      <MemoryRouter>
+        <ErrorBoundary {...mockDate} />
+      </MemoryRouter>
     );
     expect(screen.getByText('Main content')).toBeTruthy();
   });

@@ -28,6 +28,9 @@ export const getPokemonByUrlOrNameData = {
     { type: { name: pokemonObject.types[0], url: 'url' } },
     { type: { name: pokemonObject.types[1], url: 'url' } },
   ],
+  base_experience: 1,
+  height: 1,
+  weight: 1,
 };
 
 export const getPokemonByAbilityOrTypeData = {
