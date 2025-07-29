@@ -9,7 +9,7 @@ import { globalIgnores } from 'eslint/config';
 import reactCompiler from 'eslint-plugin-react-compiler';
 
 export default tseslint.config([
-  globalIgnores(['dist','coverage']),
+  globalIgnores(['dist', 'coverage']),
   {
     files: ['**/*.{ts,tsx}'],
     extends: [

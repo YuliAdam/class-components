@@ -12,9 +12,16 @@
     width: 400px;
     height: auto;
     margin: -180px -50px -180px -50px;
+    @media (max-width: 925px) {
+      width: 42vw;
+      margin: -180px -5vw -180px -5vw;
+    }
   }
   &_text {
     font-size: 200px;
+    @media (max-width: 925px) {
+      font-size: 21vw;
+    }
   }
   &_info {
     font-size: 30px;

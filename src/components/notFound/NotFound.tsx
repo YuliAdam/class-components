@@ -1,27 +1,35 @@
-import React from 'react';
+import { useContext } from 'react';
 import Pokeball from '../../assets/img/pokeball.svg';
 import styles from './notFound.module.scss';
-
-interface Props {
-  backClick: () => void;
-}
+import { SearchContext } from '../../pages/Main';
+import { setSearchValueInLocalStorage } from '../../localStorage/localStorage';
+import { useNavigate } from 'react-router';
+import { PATH } from '../../configs/routesConfig';
 
 export const NOT_FOUND_MESSAGE = 'Pokemon not found';
 
-export default class NotFound extends React.Component<Props> {
-  render() {
-    return (
-      <section className={styles.not_found}>
-        <div className={styles.not_found_wrap}>
-          <span className={styles.not_found_text}>4</span>
-          <img className={styles.not_found_img} src={Pokeball} alt="pokeball" />
-          <span className={styles.not_found_text}>4</span>
-        </div>
-        <p className={styles.not_found_info}>{NOT_FOUND_MESSAGE}</p>
-        <button className={styles.not_found_btn} onClick={this.props.backClick}>
-          Back
-        </button>
-      </section>
-    );
+export default function NotFound() {
+  const setSearch = useContext(SearchContext)?.setValue;
+  const navigate = useNavigate();
+
+  function backClick() {
+    if (setSearch) {
+      setSearch('');
+      setSearchValueInLocalStorage('');
+      navigate(PATH.empty);
+    }
   }
+  return (
+    <section className={styles.not_found}>
+      <div className={styles.not_found_wrap}>
+        <span className={styles.not_found_text}>4</span>
+        <img className={styles.not_found_img} src={Pokeball} alt="pokeball" />
+        <span className={styles.not_found_text}>4</span>
+      </div>
+      <p className={styles.not_found_info}>{NOT_FOUND_MESSAGE}</p>
+      <button className={styles.not_found_btn} onClick={backClick}>
+        Back
+      </button>
+    </section>
+  );
 }

@@ -3,7 +3,6 @@ import ErrorContent from './ErrorContent';
 
 interface Props {
   fallback: ReactNode;
-  backClick: () => void;
 }
 
 interface State {
@@ -24,14 +23,11 @@ class ErrorBoundary extends Component<Props> {
     console.error('Uncaught error:', error, errorInfo);
   }
 
-  onClickBack() {
-    this.props.backClick();
-    this.setState({ hasError: false });
-  }
-
   public render() {
     if (this.state.hasError) {
-      return <ErrorContent backClick={() => this.onClickBack()} />;
+      return (
+        <ErrorContent backClick={() => this.setState({ hasError: false })} />
+      );
     }
 
     return this.props.fallback;

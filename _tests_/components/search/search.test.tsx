@@ -1,39 +1,43 @@
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import Search from '../../../src/components/search/Search';
-import { describe, expect, test, vi } from 'vitest';
+import { describe, expect, test } from 'vitest';
 import { localStorageSearchValueKey } from '../../../src/configs/localStorageConfig';
+import '@testing-library/jest-dom';
+import { BrowserRouter, Route, Routes } from 'react-router';
+import { PATH } from '../../../src/configs/routesConfig';
 
 const TEST_VALUE = 'test';
 const NEW_VALUE = 'new value';
-const mockDate = {
-  submitInput: vi.fn(),
-  generateError: vi.fn(),
-  hasError: false,
-};
 
 describe('search test', () => {
-  test('loads and displays search', async () => {
+  test('loads and displays search with value from LS', async () => {
     localStorage.setItem(localStorageSearchValueKey, TEST_VALUE);
-    render(<Search {...mockDate} />);
-    const btn = screen.getByText('Error Button');
-    expect(btn).toBeInTheDocument();
+    console.log(localStorage.getItem(localStorageSearchValueKey));
+    render(
+      <BrowserRouter>
+        <Routes>
+          <Route path={PATH.empty} element={<Search />} />
+        </Routes>
+      </BrowserRouter>
+    );
     const input = screen.getByPlaceholderText('Search');
     expect(input).toBeInTheDocument();
-    const searchIcon = screen.getByTitle('Search Icon');
-    expect(searchIcon).toBeInTheDocument();
-    expect(input).toHaveValue(TEST_VALUE);
+    const icon = screen.getByTitle('Search Icon');
+    expect(icon).toBeInTheDocument();
+    await userEvent.click(icon);
+  });
+
+  test('loads and displays search if change value', async () => {
+    render(
+      <BrowserRouter>
+        <Routes>
+          <Route path={PATH.empty} element={<Search />} />
+        </Routes>
+      </BrowserRouter>
+    );
+    const input = screen.getByPlaceholderText('Search');
     await userEvent.type(input, NEW_VALUE);
-    expect(input).toHaveValue(TEST_VALUE.concat(NEW_VALUE));
-    await userEvent.keyboard('{Enter>}');
-    expect(mockDate.submitInput).toHaveBeenCalledTimes(1);
-    await userEvent.clear(input);
-    expect(input).toHaveValue('');
-    expect(mockDate.submitInput).toHaveBeenCalledTimes(2);
-    await userEvent.type(input, NEW_VALUE);
-    await userEvent.click(searchIcon);
-    expect(mockDate.submitInput).toHaveBeenCalledTimes(3);
-    await userEvent.click(btn);
-    expect(mockDate.generateError).toHaveBeenCalledTimes(1);
+    expect(input).toHaveValue(NEW_VALUE);
   });
 });

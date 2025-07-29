@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">86.66% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>19/19</span>
+                <span class='fraction'>26/30</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">50% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>1/1</span>
+                <span class='fraction'>2/4</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>1/1</span>
+                <span class='fraction'>2/2</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">86.66% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>19/19</span>
+                <span class='fraction'>26/30</span>
             </div>
         
             
@@ -90,59 +90,83 @@
 <a name='L25'></a><a href='#L25'>25</a>
 <a name='L26'></a><a href='#L26'>26</a>
 <a name='L27'></a><a href='#L27'>27</a>
-<a name='L28'></a><a href='#L28'>28</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<a name='L28'></a><a href='#L28'>28</a>
+<a name='L29'></a><a href='#L29'>29</a>
+<a name='L30'></a><a href='#L30'>30</a>
+<a name='L31'></a><a href='#L31'>31</a>
+<a name='L32'></a><a href='#L32'>32</a>
+<a name='L33'></a><a href='#L33'>33</a>
+<a name='L34'></a><a href='#L34'>34</a>
+<a name='L35'></a><a href='#L35'>35</a>
+<a name='L36'></a><a href='#L36'>36</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import React from 'react';
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { useContext } from 'react';
 import Pokeball from '../../assets/img/pokeball.svg';
 import styles from './notFound.module.scss';
-&nbsp;
-interface Props {
-  backClick: () =&gt; void;
-}
+import { SearchContext } from '../../pages/Main';
+import { setSearchValueInLocalStorage } from '../../localStorage/localStorage';
+import { useNavigate } from 'react-router';
+import { PATH } from '../../configs/routesConfig';
 &nbsp;
 export const NOT_FOUND_MESSAGE = 'Pokemon not found';
 &nbsp;
-export default class NotFound extends React.Component&lt;Props&gt; {
-  render() {
-    return (
-      &lt;section className={styles.not_found}&gt;
-        &lt;div className={styles.not_found_wrap}&gt;
-          &lt;span className={styles.not_found_text}&gt;4&lt;/span&gt;
-          &lt;img className={styles.not_found_img} src={Pokeball} alt="pokeball" /&gt;
-          &lt;span className={styles.not_found_text}&gt;4&lt;/span&gt;
-        &lt;/div&gt;
-        &lt;p className={styles.not_found_info}&gt;{NOT_FOUND_MESSAGE}&lt;/p&gt;
-        &lt;button className={styles.not_found_btn} onClick={this.props.backClick}&gt;
-          Back
-        &lt;/button&gt;
-      &lt;/section&gt;
-    );
+export default function NotFound() {
+  const setSearch = useContext(SearchContext<span class="branch-0 cbranch-no" title="branch not covered" >)?.setValue;</span>
+  const navigate = useNavigate();
+&nbsp;
+  function backClick() {
+    if (setSearch) <span class="branch-0 cbranch-no" title="branch not covered" >{</span>
+<span class="cstat-no" title="statement not covered" >      setSearch('');</span>
+<span class="cstat-no" title="statement not covered" >      setSearchValueInLocalStorage('');</span>
+<span class="cstat-no" title="statement not covered" >      navigate(PATH.empty);</span>
+<span class="cstat-no" title="statement not covered" >    }</span>
   }
+  return (
+    &lt;section className={styles.not_found}&gt;
+      &lt;div className={styles.not_found_wrap}&gt;
+        &lt;span className={styles.not_found_text}&gt;4&lt;/span&gt;
+        &lt;img className={styles.not_found_img} src={Pokeball} alt="pokeball" /&gt;
+        &lt;span className={styles.not_found_text}&gt;4&lt;/span&gt;
+      &lt;/div&gt;
+      &lt;p className={styles.not_found_info}&gt;{NOT_FOUND_MESSAGE}&lt;/p&gt;
+      &lt;button className={styles.not_found_btn} onClick={backClick}&gt;
+        Back
+      &lt;/button&gt;
+    &lt;/section&gt;
+  );
 }
 &nbsp;</pre></td></tr></table></pre>
 
@@ -151,7 +175,7 @@ export default class NotFound extends React.Component&lt;Props&gt; {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-07-21T21:17:56.337Z
+                at 2025-07-29T15:03:03.614Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

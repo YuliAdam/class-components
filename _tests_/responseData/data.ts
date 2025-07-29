@@ -1,3 +1,4 @@
+import { pokemonUrl } from '../../src/configs/apiConfig';
 import { getObjArr } from '../testUtils/getObjArr';
 
 export const pokemonObject = {
@@ -5,7 +6,7 @@ export const pokemonObject = {
   name: 'name',
   img: 'img',
   types: ['type', 'type.2'],
-  url: 'url',
+  url: pokemonUrl.concat('/url'),
 };
 
 export const pokemonData = { name: pokemonObject.name, url: pokemonObject.url };
@@ -28,6 +29,9 @@ export const getPokemonByUrlOrNameData = {
     { type: { name: pokemonObject.types[0], url: 'url' } },
     { type: { name: pokemonObject.types[1], url: 'url' } },
   ],
+  base_experience: 1,
+  height: 1,
+  weight: 1,
 };
 
 export const getPokemonByAbilityOrTypeData = {

@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
-import PokemonCard from '../../../src/components/results/PokemonCard';
-import { describe, expect, test } from 'vitest';
+import PokemonCard from '../../../src/components/cards/PokemonCard';
+import { describe, expect, test, vi } from 'vitest';
 import capitalizeFirstLetter from '../../../src/utils/capitalizeFirstLetter';
 import '@testing-library/jest-dom';
 import { pokemonObject } from '../../responseData/data';
@@ -11,7 +11,9 @@ const mockDate = {
     name: pokemonObject.name,
     img: pokemonObject.img,
     types: pokemonObject.types,
+    color: 'white',
   },
+  onClick: vi.fn(),
 };
 
 describe('pokemon card test', () => {
@@ -36,7 +38,7 @@ describe('pokemon card test', () => {
   test('loads and displays pokemonCard missing props', async () => {
     mockDate.pokemon.abilities = [];
     mockDate.pokemon.types = [];
-    render(<PokemonCard {...mockDate} />).debug();
+    render(<PokemonCard {...mockDate} />);
     expect(screen.getAllByText(`:`)).toHaveLength(2);
   });
 });

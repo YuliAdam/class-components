@@ -1,0 +1,72 @@
+@use '../../variables';
+.about {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  svg {
+    width: 20px;
+    height: auto;
+    margin: 0 5px;
+  }
+  &_img {
+    width: 400px;
+    height: auto;
+  }
+  &_wrap {
+    width: 50%;
+  }
+  &_info {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    margin-bottom: 50px;
+    h1,
+    p {
+      margin: 5px 0;
+    }
+  }
+  &_gh {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  a {
+    text-decoration: underline;
+    color: variables.$glob_black;
+  }
+  &_text {
+    text-align: start;
+  }
+  &_close {
+    background-color: transparent;
+    border: 1px solid variables.$glob_gray;
+    border-color: variables.$glob_gray;
+    border-radius: 10px;
+    margin: 5px;
+    padding: 5px 15px;
+    outline: none;
+    font-size: 20px;
+    &:hover {
+      cursor: pointer;
+      border-color: variables.$glob_black;
+    }
+  }
+  &_back {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background-color: transparent;
+    border: 1px solid variables.$glob_gray;
+    border-color: variables.$glob_gray;
+    border-radius: 10px;
+    margin: 5px;
+    padding: 5px 15px;
+    outline: none;
+    font-size: 20px;
+    &:hover {
+      cursor: pointer;
+      border-color: variables.$glob_black;
+    }
+  }
+}

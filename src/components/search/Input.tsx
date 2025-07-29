@@ -1,4 +1,4 @@
-import React, { type ChangeEvent, type KeyboardEvent } from 'react';
+import { type ChangeEvent, type KeyboardEvent } from 'react';
 
 interface Props {
   className: string;
@@ -10,8 +10,6 @@ interface Props {
   onKeyDown: (e: KeyboardEvent<HTMLInputElement>) => void;
 }
 
-export default class Input extends React.Component<Props> {
-  render() {
-    return <input {...this.props} />;
-  }
+export default function Input(props: Props) {
+  return <input {...props} />;
 }

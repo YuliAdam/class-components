@@ -1,68 +1,89 @@
-import React, { type ChangeEvent, type KeyboardEvent } from 'react';
+import {
+  useContext,
+  useEffect,
+  useState,
+  type ChangeEvent,
+  type KeyboardEvent,
+} from 'react';
 import Input from './Input';
 import SearchIcon from '../../assets/img/searchIcon';
 import styles from './search.module.scss';
-import ErrorButton from '../error/ErrorButton';
-import { getSearchValueFromLocalStorage } from '../../localStorage/localStorage';
+import { ItemContext, PageContext, SearchContext } from '../../pages/Main';
+import { Link, useNavigate } from 'react-router';
+import { PATH } from '../../configs/routesConfig';
+import { replacePathParams } from '../../utils/replacePathParams';
+import useLocalStorage from '../../hooks/useLocalStorage';
 
-interface Props {
-  submitInput: (text: string) => void;
-  generateError: () => void;
-  hasError: boolean;
-}
-interface State {
-  value: string;
-}
-export default class Search extends React.Component<Props> {
-  state: State = {
-    value: getSearchValueFromLocalStorage(),
-  };
+export default function Search() {
+  const search = useContext(SearchContext);
+  const page = useContext(PageContext);
+  const [value, setValue] = useState(search?.value || '');
+  const navigate = useNavigate();
+  const item = useContext(ItemContext);
+  const setLocalStorage = useLocalStorage()[1];
 
-  changeInput(e: ChangeEvent<HTMLInputElement>) {
+  useEffect(() => setValue(search?.value || ''), [search?.value]);
+
+  function submitInput(text: string) {
+    search?.setValue(text.trim());
+    setValue(text.trim());
+    setLocalStorage(text.trim());
+    page?.setValue(0);
+    item?.setValue(null);
+  }
+
+  function changeInput(e: ChangeEvent<HTMLInputElement>) {
     if (e.target && e.target instanceof HTMLInputElement) {
       const text = e.target.value;
-      this.setState({ value: text });
+      setValue(text);
       if (!text.trim()) {
-        this.props.submitInput(text);
+        submitInput(text);
+        navigate(replacePathParams(PATH.pokemonParams, { page: '1' }), {
+          replace: true,
+        });
       }
     }
   }
 
-  keyDownInput(e: KeyboardEvent<HTMLInputElement>) {
+  function keyDownInput(e: KeyboardEvent<HTMLInputElement>) {
     if (e.target && e.target instanceof HTMLInputElement && e.key === 'Enter') {
       const text = e.target.value.trim();
-      this.props.submitInput(text);
-      this.setState({ value: text });
+      submitInput(text);
+      navigate(
+        replacePathParams(PATH.pokemonParams, { page: '1', searchParam: text }),
+        { replace: true }
+      );
     }
   }
 
-  render() {
-    return (
-      <section className={styles.search}>
-        <div className={styles.search_wrap}>
-          <Input
-            type="search"
-            id="search"
-            className={styles.input}
-            placeholder="Search"
-            value={this.state.value}
-            onChange={(e: ChangeEvent<HTMLInputElement>) => this.changeInput(e)}
-            onKeyDown={(e: KeyboardEvent<HTMLInputElement>) =>
-              this.keyDownInput(e)
-            }
-          />
-          <div>
-            <SearchIcon
-              className={styles.search_icon}
-              onClick={() => this.props.submitInput(this.state.value)}
-            />
-          </div>
-        </div>
-        <ErrorButton
-          onClick={this.props.generateError}
-          hasError={this.props.hasError}
+  return (
+    <section className={styles.search}>
+      <div className={styles.search_wrap}>
+        <Input
+          type="search"
+          id="search"
+          className={styles.input}
+          placeholder="Search"
+          value={value}
+          onChange={(e: ChangeEvent<HTMLInputElement>) => changeInput(e)}
+          onKeyDown={(e: KeyboardEvent<HTMLInputElement>) => keyDownInput(e)}
         />
-      </section>
-    );
-  }
+        <Link
+          to={
+            value &&
+            replacePathParams(PATH.pokemonParams, {
+              page: '1',
+              searchParam: value,
+            })
+          }
+          replace
+        >
+          <SearchIcon
+            className={styles.search_icon}
+            onClick={() => value && submitInput(value)}
+          />
+        </Link>
+      </div>
+    </section>
+  );
 }

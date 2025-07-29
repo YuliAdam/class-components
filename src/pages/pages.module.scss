@@ -1,0 +1,42 @@
+@use '../variables';
+.container {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  @media (max-width: 576px) {
+    flex-direction: column-reverse;
+  }
+  &_main {
+    width: 50%;
+    @media (max-width: 576px) {
+      width: 100%;
+    }
+  }
+  &_item {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    @media (max-width: 576px) {
+      width: 100%;
+    }
+  }
+}
+.about {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background-color: transparent;
+  border: 1px solid variables.$glob_gray;
+  border-color: variables.$glob_gray;
+  border-radius: 10px;
+  margin: 5px;
+  padding: 5px 15px;
+  outline: none;
+  font-size: 20px;
+  color: variables.$glob_black;
+  &:hover {
+    cursor: pointer;
+    border-color: variables.$glob_black;
+  }
+}

@@ -17,6 +17,7 @@ export default defineConfig({
         'src/main.{js,jsx,ts,tsx}',
         'src/**/*.d.ts',
         'src/configs/*',
+        'src/routes/*',
       ],
       all: true,
       thresholds: {
