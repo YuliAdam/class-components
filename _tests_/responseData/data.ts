@@ -1,3 +1,4 @@
+import { pokemonUrl } from '../../src/configs/apiConfig';
 import { getObjArr } from '../testUtils/getObjArr';
 
 export const pokemonObject = {
@@ -5,7 +6,7 @@ export const pokemonObject = {
   name: 'name',
   img: 'img',
   types: ['type', 'type.2'],
-  url: 'url',
+  url: pokemonUrl.concat('/url'),
 };
 
 export const pokemonData = { name: pokemonObject.name, url: pokemonObject.url };
