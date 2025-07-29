@@ -1,42 +1,42 @@
-import { useContext, useEffect, useState } from 'react';
 import PokemonCard from '../cards/PokemonCard';
-import { ItemContext } from '../../pages/Main';
 import styles from './item.module.scss';
 import { Link } from 'react-router';
 import { PATH } from '../../configs/routesConfig';
 import Loading from '../loading/Loading';
+import { useDispatch, useSelector } from 'react-redux';
+import type { RootState } from '../../store/store';
+import { replacePathParams } from '../../utils/replacePathParams';
+import { setItem } from '../../store/slices/itemSlice';
 
 export default function Item() {
-  const item = useContext(ItemContext);
-  const [isLoading, setLoading] = useState(false);
-  useEffect(() => {
-    setLoading(
-      item && item.value
-        ? !item.value.name &&
-            !item.value.color &&
-            !item.value.img &&
-            !item.value.abilities.length &&
-            !item.value.types.length
-        : false
-    );
-  }, [item?.value]);
+  const page = useSelector((state: RootState) => state.page.value);
+  const search = useSelector((state: RootState) => state.search.value);
+  const item = useSelector((state: RootState) => state.item);
+  const dispatch = useDispatch();
+
   return (
     <div className={styles.item}>
-      {isLoading ? (
+      {item.isLoading ? (
         <Loading />
       ) : (
         <>
-          {item && item.value && (
+          {item.value && (
             <PokemonCard
               pokemon={item.value}
               onClick={() => {}}
               className={styles.double}
             />
           )}
-          <Link to={PATH.pokemonParams} replace>
+          <Link
+            to={replacePathParams(PATH.pokemonParams, {
+              page: `${page + 1}`,
+              searchParam: search,
+            })}
+            replace
+          >
             <button
               className={styles.item_close}
-              onClick={() => item?.setValue(null)}
+              onClick={() => dispatch(setItem(null))}
             >
               Close
             </button>

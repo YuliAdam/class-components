@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import styles from './card.module.scss';
 import {
   getAllRequest,
@@ -16,17 +16,19 @@ import PokemonCard from './PokemonCard';
 import Pagination from '../pagination/Pagination';
 import isValidRequestString from '../../utils/isValidRequestString';
 import Loading from '../loading/Loading';
-import { ItemContext, PageContext, SearchContext } from '../../pages/Main';
 import { useNavigate } from 'react-router';
 import { replacePathParams } from '../../utils/replacePathParams';
 import { PATH } from '../../configs/routesConfig';
 import useLocalStorage from '../../hooks/useLocalStorage';
 import { getSearchValueFromLocalStorage } from '../../localStorage/localStorage';
 import getColor from '../../utils/getColor';
+import { useDispatch, useSelector } from 'react-redux';
+import type { RootState } from '../../store/store';
+import { changePageSlice, setPage } from '../../store/slices/pageSlice';
+import { setItem, setLoadingItem } from '../../store/slices/itemSlice';
 
 interface State {
   items: IPokemon[];
-  page: number;
   isSearchMood: boolean;
   isLoading: boolean;
 }
@@ -88,7 +90,6 @@ async function getPokemonByAbilityOrTypeRequest(searchStr: string) {
 
 const initState: State = {
   items: [],
-  page: 0,
   isSearchMood: false,
   isLoading: true,
 };
@@ -96,11 +97,12 @@ const initState: State = {
 export default function CardList() {
   const [state, setState] = useState(initState);
   const [hasError, setError] = useState(false);
-  const search = useContext(SearchContext);
-  const page = useContext(PageContext);
-  const itemContext = useContext(ItemContext);
   const navigate = useNavigate();
   const localStorageState = useLocalStorage()[0];
+  const search = useSelector((state: RootState) => state.search.value);
+  const page = useSelector((state: RootState) => state.page.value);
+  const item = useSelector((state: RootState) => state.item);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     try {
@@ -108,7 +110,6 @@ export default function CardList() {
         getPokemonRequest(0).then((res) => {
           setState({
             items: res,
-            page: 0,
             isSearchMood: false,
             isLoading: false,
           });
@@ -121,7 +122,7 @@ export default function CardList() {
         navigate(
           replacePathParams(PATH.pokemonParams, {
             page: '1',
-            searchParam: search?.value,
+            searchParam: search,
           }),
           { replace: true }
         );
@@ -129,7 +130,7 @@ export default function CardList() {
     } catch (err) {
       if (err instanceof Error) generateError(err.message);
     }
-  }, [search?.value, localStorageState]);
+  }, [search, localStorageState]);
 
   function generateError(message: string) {
     console.log(message);
@@ -139,7 +140,6 @@ export default function CardList() {
   function setLoadingMood() {
     setState({
       items: [],
-      page: state.page,
       isSearchMood: state.isSearchMood,
       isLoading: true,
     });
@@ -148,45 +148,41 @@ export default function CardList() {
   async function updateCards() {
     try {
       setLoadingMood();
-      if (isValidRequestString(search?.value || '')) {
-        const pokemon = await getPokemonBySearchRequest(search?.value || '');
+      if (isValidRequestString(search)) {
+        const pokemon = await getPokemonBySearchRequest(search);
         if (pokemon) {
           setState({
             items: [pokemon],
-            page: 0,
             isSearchMood: true,
             isLoading: false,
           });
         } else {
           const pokemonsByAbilityOrType =
-            await getPokemonByAbilityOrTypeRequest(search?.value || '');
+            await getPokemonByAbilityOrTypeRequest(search);
           if (pokemonsByAbilityOrType) {
             setState({
               items: pokemonsByAbilityOrType,
-              page: 0,
               isSearchMood: true,
               isLoading: false,
             });
           } else {
             setState({
               items: [],
-              page: 0,
               isSearchMood: true,
               isLoading: false,
             });
             navigate(
               replacePathParams(PATH.pokemonNotFoundParams, {
-                searchParam: search?.value || '',
+                searchParam: search,
               }),
               { replace: true }
             );
           }
-          page?.setValue(0);
+          dispatch(setPage(0));
         }
       } else {
         setState({
           items: await getPokemonRequest(0),
-          page: 0,
           isSearchMood: false,
           isLoading: false,
         });
@@ -197,7 +193,7 @@ export default function CardList() {
   }
 
   const prevClick = () => {
-    if (state.page) changePage(-1);
+    if (page) changePage(-1);
   };
 
   const nextClick = () => {
@@ -205,46 +201,44 @@ export default function CardList() {
   };
 
   async function changePage(num: number) {
-    itemContext?.setValue(null);
+    dispatch(setItem(null));
     setLoadingMood();
-    page?.setValue(state.page + 1 + num);
     if (!state.isSearchMood) {
       navigate(
         replacePathParams(PATH.pokemonParams, {
-          page: (state.page + 1 + num).toString(),
+          page: `${page + 1 + num}`,
         }),
         { replace: true }
       );
       setState({
-        items: await getPokemonRequest(state.page + num),
-        page: state.page + num,
+        items: await getPokemonRequest(page + num),
         isSearchMood: false,
         isLoading: false,
       });
     } else {
       navigate(
         replacePathParams(PATH.pokemonParams, {
-          page: (state.page + 1 + num).toString(),
-          searchParam: search?.value,
+          page: `${page + 1 + num}`,
+          searchParam: search,
         }),
         { replace: true }
       );
       const copyItems = state.items.slice();
       setLoadingMood();
       setTimeout(() => {
-        setState((prevState: State) => ({
+        setState({
           items: copyItems,
-          page: prevState.page + num,
           isSearchMood: true,
           isLoading: false,
-        }));
+        });
       }, 300);
     }
+    dispatch(changePageSlice(num));
   }
 
   function hasNextPage() {
     return state.isSearchMood
-      ? state.items.length > ITEMS_AT_PAGE * (state.page + 1)
+      ? state.items.length > ITEMS_AT_PAGE * (page + 1)
       : state.items.length >= ITEMS_AT_PAGE;
   }
 
@@ -252,8 +246,7 @@ export default function CardList() {
     return state.items.map((item, i) => {
       if (
         state.items.length <= ITEMS_AT_PAGE ||
-        (i >= state.page * ITEMS_AT_PAGE &&
-          i < (state.page + 1) * ITEMS_AT_PAGE)
+        (i >= page * ITEMS_AT_PAGE && i < (page + 1) * ITEMS_AT_PAGE)
       ) {
         return (
           <PokemonCard
@@ -266,23 +259,17 @@ export default function CardList() {
     });
   }
   async function selectItem(item: IPokemon) {
-    itemContext?.setValue({
-      abilities: [],
-      name: '',
-      img: '',
-      types: [],
-      color: '',
-    });
+    dispatch(setLoadingItem(true));
     navigate(
       replacePathParams(PATH.itemParams, {
-        page: (state.page + 1).toString(),
-        searchParam: search?.value || '',
+        page: `${page + 1}`,
+        searchParam: search,
         item: item.name,
       }),
       { replace: true }
     );
     const pokemon = await getPokemonBySearchRequest(item.name);
-    itemContext?.setValue(pokemon);
+    dispatch(setItem(pokemon));
   }
 
   function generateErrorIfHasError() {
@@ -300,7 +287,7 @@ export default function CardList() {
         className={
           state.items.length === 1
             ? styles.result
-            : itemContext?.value
+            : item.value
               ? styles.results_half
               : styles.results
         }
@@ -309,7 +296,7 @@ export default function CardList() {
         {getPokemonCards()}
       </section>
       <Pagination
-        pageNum={state.page + 1}
+        pageNum={page + 1}
         prevClick={prevClick}
         nextClick={nextClick}
         hasNextPage={hasNextPage()}
