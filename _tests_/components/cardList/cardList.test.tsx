@@ -4,7 +4,8 @@ import CardList, {
 } from '../../../src/components/cards/CardList';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import '@testing-library/jest-dom';
-import { MemoryRouter } from 'react-router';
+import ReduxProvider from '../../testUtils/ReduxProvider';
+import RouterProvider from '../../testUtils/RouterProvider';
 
 describe('search test', () => {
   const pageNum = 1;
@@ -13,20 +14,12 @@ describe('search test', () => {
   });
 
   test('loads and displays CardList', async () => {
-    render(
-      <MemoryRouter>
-        <CardList />
-      </MemoryRouter>
-    );
+    render(<ReduxProvider child={<RouterProvider child={<CardList />} />} />);
     const loadElement = screen.getByAltText('loading...');
     await waitFor(() => {
       if (loadElement) expect(screen.getByText('Prev')).toBeInTheDocument();
     });
-    render(
-      <MemoryRouter>
-        <CardList />
-      </MemoryRouter>
-    ).debug();
+    render(<ReduxProvider child={<RouterProvider child={<CardList />} />} />);
     const pokemonWrapper = screen.getByTestId('pokemon card wrap');
     expect(pokemonWrapper).toBeInTheDocument();
     expect(pokemonWrapper.children.length).toBe(ITEMS_AT_PAGE);

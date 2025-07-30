@@ -17,7 +17,7 @@ function About() {
         className={styles.about_back}
         onClick={() => navigate(PATH.empty)}
       >
-        Back
+        Home
       </button>
       <div className={styles.about_wrap}>
         <div className={styles.about_info}>
