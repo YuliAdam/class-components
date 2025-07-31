@@ -10,6 +10,7 @@ export const pokemonObject = {
 };
 
 export const testPokemon = {
+  id: 1,
   abilities: pokemonObject.abilities,
   name: pokemonObject.name,
   img: pokemonObject.img,

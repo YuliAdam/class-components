@@ -4,15 +4,17 @@ import { describe, expect, test, vi } from 'vitest';
 import capitalizeFirstLetter from '../../../src/utils/capitalizeFirstLetter';
 import '@testing-library/jest-dom';
 import { testPokemon } from '../../responseData/data';
+import ReduxProvider from '../../testUtils/ReduxProvider';
 
 const mockDate = {
   pokemon: testPokemon,
   onClick: vi.fn(),
+  className: '',
 };
 
 describe('pokemon card test', () => {
   test('loads and displays pokemonCard', async () => {
-    render(<PokemonCard {...mockDate} />);
+    render(<ReduxProvider child={<PokemonCard {...mockDate} />} />);
     const title = screen.getByText(
       capitalizeFirstLetter(mockDate.pokemon.name)
     );
@@ -32,7 +34,7 @@ describe('pokemon card test', () => {
   test('loads and displays pokemonCard missing props', async () => {
     mockDate.pokemon.abilities = [];
     mockDate.pokemon.types = [];
-    render(<PokemonCard {...mockDate} />);
+    render(<ReduxProvider child={<PokemonCard {...mockDate} />} />);
     expect(screen.getAllByText(`:`)).toHaveLength(2);
   });
 });
