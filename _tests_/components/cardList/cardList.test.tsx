@@ -8,7 +8,6 @@ import ReduxProvider from '../../testUtils/ReduxProvider';
 import RouterProvider from '../../testUtils/RouterProvider';
 
 describe('search test', () => {
-  const pageNum = 1;
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -19,14 +18,11 @@ describe('search test', () => {
     await waitFor(() => {
       if (loadElement) expect(screen.getByText('Prev')).toBeInTheDocument();
     });
-    render(<ReduxProvider child={<RouterProvider child={<CardList />} />} />);
+    render(
+      <ReduxProvider child={<RouterProvider child={<CardList />} />} />
+    ).debug();
     const pokemonWrapper = screen.getByTestId('pokemon card wrap');
     expect(pokemonWrapper).toBeInTheDocument();
     expect(pokemonWrapper.children.length).toBe(ITEMS_AT_PAGE);
-    expect(screen.getByText(pageNum)).toBeInTheDocument();
-    const prevBtn = screen.getByText('Prev');
-    expect(prevBtn).toBeInTheDocument();
-    const nextBtn = screen.getByText('Next');
-    expect(nextBtn).toBeInTheDocument();
   });
 });

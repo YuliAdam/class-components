@@ -36,10 +36,10 @@ function About() {
             junior! I&apos;m from Belarus.
           </p>
           <span>
-            <Link to={gitHubInfo.courseLink}> React 2025Q3</Link>
+            <Link to={gitHubInfo.courseLink}> React 2025Q3 </Link>
           </span>
           <span>
-            is a third course by RSSchool what I frequenting. I hope to find
+            - is a third course by RSSchool what I frequenting. I hope to find
             work as a developer soon!
           </span>
           <p>Thank you for attention and enjoy my application about pokemon!</p>

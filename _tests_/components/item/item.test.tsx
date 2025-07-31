@@ -7,7 +7,9 @@ import RouterProvider from '../../testUtils/RouterProvider';
 
 describe('item test', () => {
   test('loads and displays item', async () => {
-    render(<ReduxProvider child={<RouterProvider child={<Item />} />} />);
+    render(
+      <ReduxProvider child={<RouterProvider child={<Item />} />} />
+    ).debug();
     expect(screen.getByText('Close')).toBeInTheDocument();
   });
 });

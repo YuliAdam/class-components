@@ -3,7 +3,10 @@ import { cleanup } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { setupServer } from 'msw/node';
 import { http, HttpResponse } from 'msw';
-import { getUrlByRequestOption, requestOptions } from '../src/service/api';
+import {
+  getUrlByRequestOption,
+  requestOptions,
+} from '../src/service/apiRequests';
 import { ITEMS_AT_PAGE } from '../src/components/cards/CardList';
 import {
   getAllPokemonData,

@@ -1,17 +1,6 @@
 import { useEffect, useState } from 'react';
 import styles from './card.module.scss';
-import {
-  getAllRequest,
-  getByNameOrIndexRequest,
-  requestOptions,
-} from '../../service/api';
-import type {
-  IAbilityOrTypeResponse,
-  IAllPokemonResponse,
-  IObjectInfoResponse,
-  IPokemon,
-  IPokemonResponse,
-} from '../../types/types';
+import type { IPokemon } from '../../types/types';
 import PokemonCard from './PokemonCard';
 import Pagination from '../pagination/Pagination';
 import isValidRequestString from '../../utils/isValidRequestString';
@@ -21,11 +10,15 @@ import { replacePathParams } from '../../utils/replacePathParams';
 import { PATH } from '../../configs/routesConfig';
 import useLocalStorage from '../../hooks/useLocalStorage';
 import { getSearchValueFromLocalStorage } from '../../localStorage/localStorage';
-import getColor from '../../utils/getColor';
 import { useDispatch, useSelector } from 'react-redux';
 import type { RootState } from '../../store/store';
 import { changePageSlice, setPage } from '../../store/slices/pageSlice';
 import { setItem, setLoadingItem } from '../../store/slices/itemSlice';
+import {
+  getPokemonAtPage,
+  getPokemonByAbilityOrType,
+  getPokemonBySearch,
+} from '../../service/apiMethods';
 
 interface State {
   items: IPokemon[];
@@ -34,59 +27,6 @@ interface State {
 }
 
 export const ITEMS_AT_PAGE = 15;
-
-function getPokemonObj(pokemon: IPokemonResponse) {
-  return {
-    abilities: [
-      ...pokemon.abilities.map(
-        (item: { ability: IObjectInfoResponse }) => item.ability.name
-      ),
-    ],
-    name: pokemon.name,
-    img: pokemon.sprites.front_default,
-    types: [
-      ...pokemon.types.map(
-        (item: { type: IObjectInfoResponse }) => item.type.name
-      ),
-    ],
-    color: getColor(pokemon.height, pokemon.base_experience, pokemon.weight),
-  };
-}
-
-async function getPokemonRequest(page: number) {
-  const result: IAllPokemonResponse = await getAllRequest(
-    requestOptions.pokemon,
-    { limit: ITEMS_AT_PAGE, offset: page * ITEMS_AT_PAGE }
-  );
-  return await Promise.all(
-    result.results.map(async (pokemon: IObjectInfoResponse) => {
-      const response = await (await fetch(pokemon.url)).json();
-      return getPokemonObj(response);
-    })
-  );
-}
-
-async function getPokemonBySearchRequest(name: string) {
-  const result: IPokemonResponse = await getByNameOrIndexRequest(
-    requestOptions.pokemon,
-    name
-  );
-  return result && getPokemonObj(result);
-}
-
-async function getPokemonByAbilityOrTypeRequest(searchStr: string) {
-  const result: IAbilityOrTypeResponse =
-    (await getByNameOrIndexRequest(requestOptions.ability, searchStr)) ||
-    (await getByNameOrIndexRequest(requestOptions.type, searchStr));
-  if (result) {
-    return await Promise.all(
-      result.pokemon.map(async (item: { pokemon: IObjectInfoResponse }) => {
-        const response = await (await fetch(item.pokemon.url)).json();
-        return getPokemonObj(response);
-      })
-    );
-  }
-}
 
 const initState: State = {
   items: [],
@@ -107,7 +47,7 @@ export default function CardList() {
   useEffect(() => {
     try {
       if (!getSearchValueFromLocalStorage()) {
-        getPokemonRequest(0).then((res) => {
+        getPokemonAtPage(0, ITEMS_AT_PAGE).then((res) => {
           setState({
             items: res,
             isSearchMood: false,
@@ -149,7 +89,7 @@ export default function CardList() {
     try {
       setLoadingMood();
       if (isValidRequestString(search)) {
-        const pokemon = await getPokemonBySearchRequest(search);
+        const pokemon = await getPokemonBySearch(search);
         if (pokemon) {
           setState({
             items: [pokemon],
@@ -158,7 +98,7 @@ export default function CardList() {
           });
         } else {
           const pokemonsByAbilityOrType =
-            await getPokemonByAbilityOrTypeRequest(search);
+            await getPokemonByAbilityOrType(search);
           if (pokemonsByAbilityOrType) {
             setState({
               items: pokemonsByAbilityOrType,
@@ -182,7 +122,7 @@ export default function CardList() {
         }
       } else {
         setState({
-          items: await getPokemonRequest(0),
+          items: await getPokemonAtPage(0, ITEMS_AT_PAGE),
           isSearchMood: false,
           isLoading: false,
         });
@@ -211,7 +151,7 @@ export default function CardList() {
         { replace: true }
       );
       setState({
-        items: await getPokemonRequest(page + num),
+        items: await getPokemonAtPage(page + num, ITEMS_AT_PAGE),
         isSearchMood: false,
         isLoading: false,
       });
@@ -268,7 +208,7 @@ export default function CardList() {
       }),
       { replace: true }
     );
-    const pokemon = await getPokemonBySearchRequest(item.name);
+    const pokemon = await getPokemonBySearch(item.name);
     dispatch(setItem(pokemon));
   }
 

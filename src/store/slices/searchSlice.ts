@@ -5,7 +5,7 @@ const initialState = {
   value: getSearchValueFromLocalStorage(),
 };
 
-const authSlice = createSlice({
+const searchSlice = createSlice({
   name: 'searchSlice',
   initialState,
   reducers: {
@@ -18,5 +18,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { setSearch, cleanSearch } = authSlice.actions;
-export default authSlice.reducer;
+export const { setSearch, cleanSearch } = searchSlice.actions;
+export default searchSlice.reducer;

@@ -11,7 +11,7 @@ const initialState: IItem = {
   isLoading: false,
 };
 
-const authSlice = createSlice({
+const itemSlice = createSlice({
   name: 'itemSlice',
   initialState,
   reducers: {
@@ -25,5 +25,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { setItem, setLoadingItem } = authSlice.actions;
-export default authSlice.reducer;
+export const { setItem, setLoadingItem } = itemSlice.actions;
+export default itemSlice.reducer;

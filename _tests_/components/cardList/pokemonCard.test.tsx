@@ -3,16 +3,10 @@ import PokemonCard from '../../../src/components/cards/PokemonCard';
 import { describe, expect, test, vi } from 'vitest';
 import capitalizeFirstLetter from '../../../src/utils/capitalizeFirstLetter';
 import '@testing-library/jest-dom';
-import { pokemonObject } from '../../responseData/data';
+import { testPokemon } from '../../responseData/data';
 
 const mockDate = {
-  pokemon: {
-    abilities: pokemonObject.abilities,
-    name: pokemonObject.name,
-    img: pokemonObject.img,
-    types: pokemonObject.types,
-    color: 'white',
-  },
+  pokemon: testPokemon,
   onClick: vi.fn(),
 };
 

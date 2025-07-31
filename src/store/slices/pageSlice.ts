@@ -4,7 +4,7 @@ const initialState = {
   value: 0,
 };
 
-const authSlice = createSlice({
+const pageSlice = createSlice({
   name: 'pageSlice',
   initialState,
   reducers: {
@@ -17,5 +17,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { setPage, changePageSlice } = authSlice.actions;
-export default authSlice.reducer;
+export const { setPage, changePageSlice } = pageSlice.actions;
+export default pageSlice.reducer;

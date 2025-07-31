@@ -9,6 +9,14 @@ export const pokemonObject = {
   url: pokemonUrl.concat('/url'),
 };
 
+export const testPokemon = {
+  abilities: pokemonObject.abilities,
+  name: pokemonObject.name,
+  img: pokemonObject.img,
+  types: pokemonObject.types,
+  color: 'white',
+};
+
 export const pokemonData = { name: pokemonObject.name, url: pokemonObject.url };
 
 export const getAllPokemonData = {

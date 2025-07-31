@@ -51,6 +51,7 @@
 }
 
 .pokemon {
+  position: relative;
   border: 1px solid variables.$glob_black;
   width: 180px;
   height: 250px;
@@ -79,6 +80,26 @@
   }
   &_subtitle {
     font-weight: bold;
+  }
+  &_icon {
+    height: 25px;
+    width: auto;
+    position: absolute;
+    top: 0;
+    right: 0;
+    fill: variables.$glob_white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    &:hover {
+      stroke: variables.$glob_red;
+    }
+    &.selected {
+      fill: variables.$glob_red;
+      height: 30px;
+      &:hover {
+        stroke: variables.$glob_white !important;
+      }
+    }
   }
 }
 .result {

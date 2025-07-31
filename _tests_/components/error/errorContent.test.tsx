@@ -14,11 +14,11 @@ describe('error content test', () => {
     render(<RouterProvider child={<ErrorContent {...mockDate} />} />);
     const btn = screen.getByText('Back');
     expect(btn).toBeInTheDocument();
-    await userEvent.click(btn);
-    expect(mockDate.backClick).toHaveBeenCalledTimes(1);
     expect(screen.getByText('Sorry.. there was an error')).toBeInTheDocument();
     expect(screen.getByText('E')).toBeInTheDocument();
     expect(screen.getAllByText('R')).toHaveLength(3);
     expect(screen.getByAltText('pokeball')).toBeInTheDocument();
+    await userEvent.click(btn);
+    expect(mockDate.backClick).toHaveBeenCalledTimes(1);
   });
 });

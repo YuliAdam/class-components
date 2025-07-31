@@ -1,0 +1,25 @@
+@use '../../variables';
+
+.wish_list {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid variables.$glob_gray;
+  border-color: variables.$glob_gray;
+  border-radius: 10px;
+  margin: 5px;
+  padding: 5px 15px;
+  font-size: 20px;
+  color: variables.$glob_black;
+  &:hover {
+    cursor: pointer;
+    border-color: variables.$glob_black;
+  }
+  &_icon {
+    height: 22px;
+    width: auto;
+  }
+}
