@@ -87,17 +87,17 @@
     position: absolute;
     top: 0;
     right: 0;
-    fill: variables.$glob_white;
+    fill: variables.$glob_black;
     cursor: pointer;
     transition: all 0.3s ease;
     &:hover {
-      stroke: variables.$glob_red;
+      fill: white;
     }
     &.selected {
       fill: variables.$glob_red;
       height: 30px;
       &:hover {
-        stroke: variables.$glob_white !important;
+        fill: variables.$glob_white !important;
       }
     }
   }

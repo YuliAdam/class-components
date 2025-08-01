@@ -1,7 +1,6 @@
 import styles from './card.module.scss';
 import type { IPokemon } from '../../types/types';
 import capitalizeFirstLetter from '../../utils/capitalizeFirstLetter';
-import WishList from '../../assets/img/wishList';
 import { useDispatch, useSelector } from 'react-redux';
 import type { RootState } from '../../store/store';
 import {
@@ -9,6 +8,7 @@ import {
   removeFromWishList,
 } from '../../store/slices/wishListSlice';
 import { useRef } from 'react';
+import Heart from '../../assets/img/heart';
 
 interface Props {
   pokemon: IPokemon;
@@ -17,15 +17,15 @@ interface Props {
 }
 
 export default function PokemonCard({ pokemon, onClick, className }: Props) {
-  const wishList = useSelector((state: RootState) => state.wishList.value);
+  const wishList = useSelector((state: RootState) => state.wishList);
   const dispatch = useDispatch();
   const iconRef = useRef<HTMLInputElement>(null);
 
-  function toggleWishList(id: number) {
-    if (wishList.includes(`${id}`)) {
-      dispatch(removeFromWishList(`${id}`));
+  function toggleWishList(pokemon: IPokemon) {
+    if (wishList.value.includes(pokemon.id)) {
+      dispatch(removeFromWishList(pokemon.id));
     } else {
-      dispatch(addInWishList(`${id}`));
+      dispatch(addInWishList(pokemon));
     }
   }
 
@@ -49,9 +49,9 @@ export default function PokemonCard({ pokemon, onClick, className }: Props) {
         {capitalizeFirstLetter(pokemon.name)}
       </h1>
       <img className={styles.pokemon_img} src={pokemon.img} alt="pokemon img" />
-      <div ref={iconRef} onClick={() => toggleWishList(pokemon.id)}>
-        <WishList
-          className={`${styles.pokemon_icon} ${wishList.includes(`${pokemon.id}`) ? styles.selected : ''}`}
+      <div ref={iconRef} onClick={() => toggleWishList(pokemon)}>
+        <Heart
+          className={`${styles.pokemon_icon} ${wishList.value.includes(pokemon.id) ? styles.selected : ''}`}
         />
       </div>
 
