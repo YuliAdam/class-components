@@ -192,24 +192,26 @@ export default function CardList() {
           <PokemonCard
             key={item.name}
             pokemon={item}
-            onClick={() => selectItem(item)}
+            onClick={selectItem(item)}
           />
         );
       }
     });
   }
-  async function selectItem(item: IPokemon) {
-    dispatch(setLoadingItem(true));
-    navigate(
-      replacePathParams(PATH.itemParams, {
-        page: `${page + 1}`,
-        searchParam: search,
-        item: item.name,
-      }),
-      { replace: true }
-    );
-    const pokemon = await getPokemonBySearch(item.name);
-    dispatch(setItem(pokemon));
+  function selectItem(item: IPokemon) {
+    return async () => {
+      dispatch(setLoadingItem(true));
+      navigate(
+        replacePathParams(PATH.itemParams, {
+          page: `${page + 1}`,
+          searchParam: search,
+          item: item.name,
+        }),
+        { replace: true }
+      );
+      const pokemon = await getPokemonBySearch(item.name);
+      dispatch(setItem(pokemon));
+    };
   }
 
   function generateErrorIfHasError() {

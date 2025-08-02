@@ -8,5 +8,6 @@ describe('header test', () => {
   test('loads and displays header', async () => {
     render(<ReduxProvider child={<Header />} />);
     expect(await screen.findByTitle('Pokémon icon')).toBeInTheDocument();
+    expect(screen.getByTitle('sun')).toBeInTheDocument();
   });
 });
