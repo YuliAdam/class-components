@@ -24,19 +24,23 @@
 }
 .about {
   position: absolute;
-  top: 20px;
+  top: 0px;
   left: 20px;
   background-color: transparent;
-  border: 1px solid variables.$glob_gray;
-  border-color: variables.$glob_gray;
+  border: 1px solid variables.$glob_grey;
+  border-color: variables.$glob_grey;
   border-radius: 10px;
-  margin: 5px;
+  margin: 0 5px;
   padding: 5px 15px;
   outline: none;
   font-size: 20px;
-  color: variables.$glob_black;
+  cursor: pointer;
   &:hover {
-    cursor: pointer;
     border-color: variables.$glob_black;
+  }
+  &.dark {
+    &:hover {
+      border-color: variables.$glob_white;
+    }
   }
 }

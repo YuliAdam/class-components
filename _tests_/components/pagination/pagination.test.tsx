@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import Pagination from '../../../src/components/pagination/Pagination';
 import { describe, expect, test, vi } from 'vitest';
+import ReduxProvider from '../../testUtils/ReduxProvider';
 import '@testing-library/jest-dom';
 
 const mockDate = {
@@ -13,7 +14,7 @@ const mockDate = {
 
 describe('pagination test', () => {
   test('loads and displays pagination', async () => {
-    render(<Pagination {...mockDate} />);
+    render(<ReduxProvider child={<Pagination {...mockDate} />} />);
     expect(screen.getByText('1')).toBeInTheDocument();
     const nextBtn = screen.getByText('Next');
     const prevBtn = screen.getByText('Prev');
@@ -29,7 +30,7 @@ describe('pagination test', () => {
 
   test('should change page number', async () => {
     mockDate.pageNum = 2;
-    render(<Pagination {...mockDate} />);
+    render(<ReduxProvider child={<Pagination {...mockDate} />} />);
     expect(screen.getByText('2')).toBeInTheDocument();
     expect(
       screen.getByText('Next').parentElement?.classList.contains('opacity')
@@ -41,7 +42,7 @@ describe('pagination test', () => {
 
   test('should not change page number if page is 1', async () => {
     mockDate.pageNum = 1;
-    render(<Pagination {...mockDate} />);
+    render(<ReduxProvider child={<Pagination {...mockDate} />} />);
     const prevBtn = screen.getByText('Prev');
     await userEvent.click(prevBtn);
     expect(mockDate.prevClick).toHaveBeenCalledTimes(2);
@@ -50,7 +51,7 @@ describe('pagination test', () => {
 
   test('should not change page number if is last page', async () => {
     mockDate.hasNextPage = false;
-    render(<Pagination {...mockDate} />);
+    render(<ReduxProvider child={<Pagination {...mockDate} />} />);
     const nextBtn = screen.getByText('Next');
     await userEvent.click(nextBtn);
     expect(mockDate.nextClick).toHaveBeenCalledTimes(2);

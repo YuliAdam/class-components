@@ -5,11 +5,35 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-direction: column-reverse;
+  margin-top: 20px;
   &_title {
     width: 278px;
     height: auto;
     stroke: variables.$glob_black;
     stroke-width: 0.2px;
     fill: variables.$glob_yellow;
+    &.dark {
+      stroke: variables.$glob_yellow;
+    }
+  }
+}
+.sun,
+.moon {
+  width: 34px;
+  height: auto;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.moon {
+  fill: variables.$glob_light;
+  &:hover {
+    fill: variables.$glob_white;
+  }
+}
+.sun {
+  fill: variables.$glob_grey;
+  &:hover {
+    fill: variables.$glob_black;
   }
 }

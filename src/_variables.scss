@@ -8,6 +8,13 @@ $glob_primary_color: rgba(7, 2, 60, 0.61);
 $glob_text_color: rgb(24, 23, 23);
 $glob_yellow: rgb(255, 255, 0);
 $glob_black: rgb(0, 0, 0);
-$glob_gray: rgba(82, 82, 82, 0.247);
+$glob_grey: rgba(82, 82, 82, 0.247);
 $glob_red: rgb(255, 0, 0);
 $glob_white: rgb(255, 255, 255);
+$glob_dark: rgb(30, 30, 30);
+$glob_light: rgb(129, 129, 129);
+
+@mixin theme($theme_bg: $glob_white, $theme_color: $glob_black) {
+  background: $theme_bg;
+  color: $theme_color;
+}

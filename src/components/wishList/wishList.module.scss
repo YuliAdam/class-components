@@ -1,38 +1,56 @@
 @use '../../variables';
 
 .wish_list {
-  background-color: variables.$glob_white;
+  backdrop-filter: blur(10px);
   position: fixed;
   top: 20px;
-  right: 20px;
+  right: 40px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border: 1px solid variables.$glob_gray;
-  border-color: variables.$glob_gray;
+  border: 1px solid variables.$glob_grey;
   border-radius: 10px;
-  margin: 5px;
+  margin: 0 5px;
   padding: 5px 15px;
   font-size: 20px;
   color: variables.$glob_black;
   z-index: 1;
+  @media (max-width: 500px) {
+    bottom: 20px !important;
+    top: auto;
+  }
   &:hover {
     border-color: variables.$glob_black;
+  }
+  &.dark {
+    border-color: variables.$glob_light;
+    &:hover {
+      border-color: variables.$glob_white;
+    }
   }
   &_icon {
     height: 22px;
     width: auto;
     margin: 0 5px;
-    fill: variables.$glob_gray;
+    fill: variables.$glob_grey;
+    cursor: pointer;
     &:hover {
-      cursor: pointer;
       fill: variables.$glob_black;
+    }
+    &.dark {
+      fill: variables.$glob_light;
+      &:hover {
+        fill: variables.$glob_white;
+      }
     }
   }
   &_num {
     height: 22px;
     width: auto;
     flex-grow: 1;
+    &.dark {
+      fill: variables.$glob_white;
+    }
   }
   &_wrap {
     margin: 0 5px;

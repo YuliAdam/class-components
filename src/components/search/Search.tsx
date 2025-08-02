@@ -14,6 +14,7 @@ import { setItem } from '../../store/slices/itemSlice';
 
 export default function Search() {
   const search = useSelector((state: RootState) => state.search.value);
+  const isDarkTheme = useSelector((state: RootState) => state.themes.isDark);
   const dispatch = useDispatch();
   const [value, setValue] = useState(search);
   const navigate = useNavigate();
@@ -74,7 +75,7 @@ export default function Search() {
           replace
         >
           <SearchIcon
-            className={styles.search_icon}
+            className={`${styles.search_icon} ${isDarkTheme ? styles.dark : ''}`}
             onClick={() => value && submitInput(value)}
           />
         </Link>

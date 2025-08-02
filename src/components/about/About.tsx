@@ -3,6 +3,8 @@ import GitHubLogo from '../../assets/img/github-logo';
 import styles from './about.module.scss';
 import { gitHubInfo } from '../footer/Footer';
 import { PATH } from '../../configs/routesConfig';
+import { useSelector } from 'react-redux';
+import type { RootState } from '../../store/store';
 const INFO = {
   name: 'Yuliya Adamovich',
   role: 'Frontend Developer',
@@ -11,10 +13,11 @@ const INFO = {
 };
 function About() {
   const navigate = useNavigate();
+  const isDarkTheme = useSelector((state: RootState) => state.themes);
   return (
     <section className={styles.about}>
       <button
-        className={styles.about_back}
+        className={`${styles.about_back} ${isDarkTheme ? styles.back : ''}`}
         onClick={() => navigate(PATH.empty)}
       >
         Home
@@ -25,7 +28,7 @@ function About() {
           <p>{INFO.role}</p>
           <Link to={gitHubInfo.href}>
             <div className={styles.about_gh}>
-              <GitHubLogo className="" />
+              <GitHubLogo className={isDarkTheme ? styles.back : ''} />
               <p>{INFO.github}</p>
             </div>
           </Link>

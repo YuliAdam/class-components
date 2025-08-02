@@ -3,6 +3,7 @@ import searchReducer from './slices/searchSlice';
 import pageReducer from './slices/pageSlice';
 import itemReducer from './slices/itemSlice';
 import wishListReducer from './slices/wishListSlice';
+import themesReducer from './slices/themesSlice';
 
 export const store = configureStore({
   reducer: {
@@ -10,6 +11,7 @@ export const store = configureStore({
     page: pageReducer,
     item: itemReducer,
     wishList: wishListReducer,
+    themes: themesReducer,
   },
 });
 
