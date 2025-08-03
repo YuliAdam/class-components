@@ -114,6 +114,7 @@ export default function CardList() {
             navigate(
               replacePathParams(PATH.pokemonNotFoundParams, {
                 searchParam: search,
+                page: '1',
               }),
               { replace: true }
             );
