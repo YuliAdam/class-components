@@ -17,7 +17,7 @@ function About() {
   return (
     <section className={styles.about}>
       <button
-        className={`${styles.about_back} ${isDarkTheme ? styles.back : ''}`}
+        className={`${styles.about_back} ${isDarkTheme ? styles.dark : ''}`}
         onClick={() => navigate(PATH.empty)}
       >
         Home
