@@ -49,3 +49,6 @@ export const getPokemonByAbilityOrTypeData = {
 
 export const notFoundResponse = [null, { status: 404 }];
 export const NOT_FOUND_URL = 'not_found';
+
+export const errorResponse = [null, { status: 500 }];
+export const ERROR_URL = 'error';

@@ -8,7 +8,7 @@ import ReduxProvider from '../../testUtils/ReduxProvider';
 import RouterProvider from '../../testUtils/RouterProvider';
 import Search from '../../../src/components/search/Search';
 import { userEvent } from '@testing-library/user-event';
-import { pokemonObject } from '../../responseData/data';
+import { NOT_FOUND_URL, pokemonObject } from '../../responseData/data';
 
 describe('cardList test', () => {
   beforeEach(() => {
@@ -21,7 +21,6 @@ describe('cardList test', () => {
     await waitFor(() => {
       if (loadElement) expect(screen.getByText('Prev')).toBeInTheDocument();
     });
-    render(<ReduxProvider child={<RouterProvider child={<CardList />} />} />);
     const pokemonWrapper = screen.getByTestId('pokemon card wrap');
     expect(pokemonWrapper).toBeInTheDocument();
     expect(pokemonWrapper.children.length).toBe(ITEMS_AT_PAGE);
@@ -39,11 +38,61 @@ describe('cardList test', () => {
     await waitFor(() => {
       expect(loadElement).not.toBeInTheDocument();
     });
-    render(
-      <ReduxProvider child={<RouterProvider child={<CardList />} />} />
-    ).debug();
     const pokemonWrapper = screen.getByTestId('pokemon card wrap');
     expect(pokemonWrapper).toBeInTheDocument();
     expect(pokemonWrapper.children.length).toBe(1);
+  });
+
+  test('get CardList if search ability', async () => {
+    render(<ReduxProvider child={<RouterProvider child={<Search />} />} />);
+    const input = screen.getByPlaceholderText('Search');
+    await userEvent.clear(input);
+    await userEvent.type(input, pokemonObject.abilities[0]);
+    const searchIcon = screen.getByTitle('Search Icon');
+    await userEvent.click(searchIcon);
+    cleanup();
+    render(<ReduxProvider child={<RouterProvider child={<CardList />} />} />);
+    const loadElement = screen.getByAltText('loading...');
+    await waitFor(() => {
+      expect(loadElement).not.toBeInTheDocument();
+    });
+    const pokemonWrapper = screen.getByTestId('pokemon card wrap');
+    expect(pokemonWrapper).toBeInTheDocument();
+    expect(pokemonWrapper.children.length).toBe(1);
+  });
+  test('get CardList if search type', async () => {
+    render(<ReduxProvider child={<RouterProvider child={<Search />} />} />);
+    const input = screen.getByPlaceholderText('Search');
+    await userEvent.clear(input);
+    await userEvent.type(input, pokemonObject.types[0]);
+    const searchIcon = screen.getByTitle('Search Icon');
+    await userEvent.click(searchIcon);
+    cleanup();
+    render(<ReduxProvider child={<RouterProvider child={<CardList />} />} />);
+    const loadElement = screen.getByAltText('loading...');
+    await waitFor(() => {
+      expect(loadElement).not.toBeInTheDocument();
+    });
+    const pokemonWrapper = screen.getByTestId('pokemon card wrap');
+    expect(pokemonWrapper).toBeInTheDocument();
+    expect(pokemonWrapper.children.length).toBe(1);
+  });
+
+  test('get CardList if not found', async () => {
+    render(<ReduxProvider child={<RouterProvider child={<Search />} />} />);
+    const input = screen.getByPlaceholderText('Search');
+    await userEvent.clear(input);
+    await userEvent.type(input, NOT_FOUND_URL);
+    const searchIcon = screen.getByTitle('Search Icon');
+    await userEvent.click(searchIcon);
+    cleanup();
+    render(<ReduxProvider child={<RouterProvider child={<CardList />} />} />);
+    const loadElement = screen.getByAltText('loading...');
+    await waitFor(() => {
+      expect(loadElement).not.toBeInTheDocument();
+    });
+    const pokemonWrapper = screen.getByTestId('pokemon card wrap');
+    expect(pokemonWrapper).toBeInTheDocument();
+    expect(pokemonWrapper.children.length).toBe(0);
   });
 });
