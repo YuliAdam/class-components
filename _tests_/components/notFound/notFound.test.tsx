@@ -5,15 +5,12 @@ import NotFound, {
 } from '../../../src/components/notFound/NotFound';
 import { describe, expect, test } from 'vitest';
 import '@testing-library/jest-dom';
-import { MemoryRouter } from 'react-router';
+import ReduxProvider from '../../testUtils/ReduxProvider';
+import RouterProvider from '../../testUtils/RouterProvider';
 
 describe('not found test', () => {
   test('loads and displays not found', async () => {
-    render(
-      <MemoryRouter>
-        <NotFound />
-      </MemoryRouter>
-    );
+    render(<ReduxProvider child={<RouterProvider child={<NotFound />} />} />);
     expect(await screen.findAllByText('4')).toHaveLength(2);
     expect(await screen.findByAltText('pokeball')).toBeInTheDocument();
     expect(screen.getByText(NOT_FOUND_MESSAGE)).toBeInTheDocument();

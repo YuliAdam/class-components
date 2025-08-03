@@ -11,6 +11,7 @@ export interface IObjectInfoResponse {
 }
 
 export interface IPokemonResponse {
+  id: number;
   abilities: { ability: IObjectInfoResponse }[];
   name: string;
   sprites: { front_default: string };
@@ -21,6 +22,7 @@ export interface IPokemonResponse {
 }
 
 export interface IPokemon {
+  id: number;
   abilities: string[];
   name: string;
   img: string;

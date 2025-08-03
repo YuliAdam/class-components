@@ -51,6 +51,7 @@
 }
 
 .pokemon {
+  position: relative;
   border: 1px solid variables.$glob_black;
   width: 180px;
   height: 250px;
@@ -66,7 +67,7 @@
     height: 10%;
     text-align: center;
     margin: 0;
-    border-bottom: 0.5px solid variables.$glob_gray;
+    border-bottom: 0.5px solid variables.$glob_grey;
   }
   &_img {
     align-self: center;
@@ -74,11 +75,31 @@
   }
   &_info {
     height: 25%;
-    border-top: 0.5px solid variables.$glob_gray;
+    border-top: 0.5px solid variables.$glob_grey;
     width: 100%;
   }
   &_subtitle {
     font-weight: bold;
+  }
+  &_icon {
+    height: 25px;
+    width: auto;
+    position: absolute;
+    top: 0;
+    right: 0;
+    fill: variables.$glob_black;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    &:hover {
+      fill: white;
+    }
+    &.selected {
+      fill: variables.$glob_red;
+      height: 30px;
+      &:hover {
+        fill: variables.$glob_white !important;
+      }
+    }
   }
 }
 .result {
@@ -88,8 +109,8 @@
   flex-direction: column;
   &_btn {
     background-color: transparent;
-    border: 1px solid variables.$glob_gray;
-    border-color: variables.$glob_gray;
+    border: 1px solid variables.$glob_grey;
+    border-color: variables.$glob_grey;
     border-radius: 10px;
     margin: 25px;
     padding: 5px 15px;

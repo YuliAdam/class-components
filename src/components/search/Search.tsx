@@ -1,35 +1,31 @@
-import {
-  useContext,
-  useEffect,
-  useState,
-  type ChangeEvent,
-  type KeyboardEvent,
-} from 'react';
+import { useState, type ChangeEvent, type KeyboardEvent } from 'react';
 import Input from './Input';
 import SearchIcon from '../../assets/img/searchIcon';
 import styles from './search.module.scss';
-import { ItemContext, PageContext, SearchContext } from '../../pages/Main';
 import { Link, useNavigate } from 'react-router';
 import { PATH } from '../../configs/routesConfig';
 import { replacePathParams } from '../../utils/replacePathParams';
 import useLocalStorage from '../../hooks/useLocalStorage';
+import { useDispatch, useSelector } from 'react-redux';
+import type { RootState } from '../../store/store';
+import { setSearch } from '../../store/slices/searchSlice';
+import { setPage } from '../../store/slices/pageSlice';
+import { setItem } from '../../store/slices/itemSlice';
 
 export default function Search() {
-  const search = useContext(SearchContext);
-  const page = useContext(PageContext);
-  const [value, setValue] = useState(search?.value || '');
+  const search = useSelector((state: RootState) => state.search.value);
+  const isDarkTheme = useSelector((state: RootState) => state.themes.isDark);
+  const dispatch = useDispatch();
+  const [value, setValue] = useState(search);
   const navigate = useNavigate();
-  const item = useContext(ItemContext);
   const setLocalStorage = useLocalStorage()[1];
 
-  useEffect(() => setValue(search?.value || ''), [search?.value]);
-
   function submitInput(text: string) {
-    search?.setValue(text.trim());
+    dispatch(setSearch(text.trim()));
     setValue(text.trim());
     setLocalStorage(text.trim());
-    page?.setValue(0);
-    item?.setValue(null);
+    dispatch(setPage(0));
+    dispatch(setItem(null));
   }
 
   function changeInput(e: ChangeEvent<HTMLInputElement>) {
@@ -38,7 +34,7 @@ export default function Search() {
       setValue(text);
       if (!text.trim()) {
         submitInput(text);
-        navigate(replacePathParams(PATH.pokemonParams, { page: '1' }), {
+        navigate(replacePathParams(PATH.pokemonParams, { page: `1` }), {
           replace: true,
         });
       }
@@ -79,7 +75,7 @@ export default function Search() {
           replace
         >
           <SearchIcon
-            className={styles.search_icon}
+            className={`${styles.search_icon} ${isDarkTheme ? styles.dark : ''}`}
             onClick={() => value && submitInput(value)}
           />
         </Link>

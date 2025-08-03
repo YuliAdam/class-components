@@ -3,7 +3,7 @@
 .footer {
   position: absolute;
   bottom: 0;
-  width: calc(100% - 50px);
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -17,6 +17,11 @@
     path {
       stroke: variables.$glob_black;
     }
+    &.dark {
+      path {
+        stroke: variables.$glob_white;
+      }
+    }
   }
   &_RSSchool {
     g {
@@ -27,10 +32,20 @@
         stroke: variables.$glob_yellow;
       }
     }
+    &.dark {
+      g {
+        circle {
+          fill: variables.$glob_white;
+        }
+        path {
+          stroke: variables.$glob_black;
+          fill: variables.$glob_black;
+        }
+      }
+    }
   }
   &_text,
   &_link {
-    color: variables.$glob_black;
     font: variables.$glob_font;
   }
 }

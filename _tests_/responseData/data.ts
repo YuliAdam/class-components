@@ -9,6 +9,15 @@ export const pokemonObject = {
   url: pokemonUrl.concat('/url'),
 };
 
+export const testPokemon = {
+  id: 1,
+  abilities: pokemonObject.abilities,
+  name: pokemonObject.name,
+  img: pokemonObject.img,
+  types: pokemonObject.types,
+  color: 'white',
+};
+
 export const pokemonData = { name: pokemonObject.name, url: pokemonObject.url };
 
 export const getAllPokemonData = {
@@ -40,3 +49,6 @@ export const getPokemonByAbilityOrTypeData = {
 
 export const notFoundResponse = [null, { status: 404 }];
 export const NOT_FOUND_URL = 'not_found';
+
+export const errorResponse = [null, { status: 500 }];
+export const ERROR_URL = 'error';

@@ -34,6 +34,16 @@
       }
     }
     cursor: pointer;
+    &.dark {
+      path {
+        stroke: variables.$glob_light;
+      }
+      &:hover {
+        path {
+          stroke: variables.$glob_white;
+        }
+      }
+    }
   }
 }
 .input {

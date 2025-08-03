@@ -3,16 +3,13 @@ import { userEvent } from '@testing-library/user-event';
 import About from '../../../src/components/about/About';
 import { describe, expect, test } from 'vitest';
 import '@testing-library/jest-dom';
-import { MemoryRouter } from 'react-router';
+import RouterProvider from '../../testUtils/RouterProvider';
+import ReduxProvider from '../../testUtils/ReduxProvider';
 
 describe('not found test', () => {
   test('loads and displays not found', async () => {
-    render(
-      <MemoryRouter>
-        <About />
-      </MemoryRouter>
-    );
-    expect(screen.getByText('Back')).toBeInTheDocument();
+    render(<ReduxProvider child={<RouterProvider child={<About />} />} />);
+    expect(screen.getByText('Home')).toBeInTheDocument();
     const button = screen.getByRole('button');
     expect(button).toBeInTheDocument();
     await userEvent.click(button);

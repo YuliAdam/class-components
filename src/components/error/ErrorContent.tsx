@@ -9,7 +9,7 @@ interface Props {
 }
 const ERROR_TEXT = 'Sorry.. there was an error';
 
-export default function ErrorContent(props: Props) {
+export default function ErrorContent({ backClick, text }: Props) {
   const navigate = useNavigate();
   return (
     <section className={styles.not_found}>
@@ -20,11 +20,11 @@ export default function ErrorContent(props: Props) {
         <img className={styles.not_found_img} src={Pokeball} alt="pokeball" />
         <span className={styles.not_found_text}>R</span>
       </div>
-      <p className={styles.not_found_info}>{props.text || ERROR_TEXT}</p>
+      <p className={styles.not_found_info}>{text || ERROR_TEXT}</p>
       <button
         className={styles.not_found_btn}
         onClick={() => {
-          if (props.backClick) props.backClick();
+          if (backClick) backClick();
           else navigate(PATH.empty.replace(':num', '1'));
         }}
       >

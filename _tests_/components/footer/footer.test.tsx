@@ -1,11 +1,12 @@
 import { render, screen } from '@testing-library/react';
 import Footer, { gitHubInfo } from '../../../src/components/footer/Footer';
 import { describe, expect, test } from 'vitest';
+import ReduxProvider from '../../testUtils/ReduxProvider';
 import '@testing-library/jest-dom';
 
 describe('footer test', () => {
   test('loads and displays footer', async () => {
-    render(<Footer />);
+    render(<ReduxProvider child={<Footer />} />);
     expect(screen.getByText(`${gitHubInfo.text}`)).toBeInTheDocument();
     expect(
       screen.getByText(`/${gitHubInfo.year}/${gitHubInfo.schoolName}`)

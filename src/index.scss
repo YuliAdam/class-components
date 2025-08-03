@@ -1,5 +1,9 @@
 @use './variables';
 
+html {
+  @include variables.theme;
+}
+
 body {
   min-height: calc(100vh);
   height: 100%;
@@ -9,9 +13,35 @@ body {
   position: relative;
   margin: auto;
 }
+
+.dark {
+  @include variables.theme(
+    $theme_bg: variables.$glob_dark,
+    $theme_color: variables.$glob_white
+  );
+  a,
+  button,
+  div,
+  h1 {
+    color: variables.$glob_white;
+    border-color: variables.$glob_light;
+  }
+  input {
+    color: variables.$glob_white;
+  }
+  .opacity {
+    border-color: variables.$glob_white !important;
+  }
+  button:hover {
+    border-color: variables.$glob_white;
+  }
+}
+
 a {
   text-decoration: none;
+  color: variables.$glob_black;
 }
+
 main {
   width: 100%;
   padding-bottom: 60px;
@@ -20,5 +50,5 @@ main {
 .opacity {
   opacity: 0.1;
   cursor: default !important;
-  border-color: variables.$glob_gray !important;
+  border-color: variables.$glob_grey !important;
 }

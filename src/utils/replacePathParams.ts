@@ -18,7 +18,7 @@ export function replacePathParams(
     result = result.replace(':page', param.page);
   } else {
     if (path.includes('page')) {
-      result = result.replace('&page=:page', '');
+      result = result.replace('?page=:page', '');
     }
   }
   if (param.item) {

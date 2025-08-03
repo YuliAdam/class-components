@@ -3,6 +3,8 @@ import GitHubLogo from '../../assets/img/github-logo';
 import styles from './about.module.scss';
 import { gitHubInfo } from '../footer/Footer';
 import { PATH } from '../../configs/routesConfig';
+import { useSelector } from 'react-redux';
+import type { RootState } from '../../store/store';
 const INFO = {
   name: 'Yuliya Adamovich',
   role: 'Frontend Developer',
@@ -11,13 +13,14 @@ const INFO = {
 };
 function About() {
   const navigate = useNavigate();
+  const isDarkTheme = useSelector((state: RootState) => state.themes);
   return (
     <section className={styles.about}>
       <button
-        className={styles.about_back}
+        className={`${styles.about_back} ${isDarkTheme ? styles.dark : ''}`}
         onClick={() => navigate(PATH.empty)}
       >
-        Back
+        Home
       </button>
       <div className={styles.about_wrap}>
         <div className={styles.about_info}>
@@ -25,7 +28,7 @@ function About() {
           <p>{INFO.role}</p>
           <Link to={gitHubInfo.href}>
             <div className={styles.about_gh}>
-              <GitHubLogo className="" />
+              <GitHubLogo className={isDarkTheme ? styles.back : ''} />
               <p>{INFO.github}</p>
             </div>
           </Link>
@@ -36,10 +39,10 @@ function About() {
             junior! I&apos;m from Belarus.
           </p>
           <span>
-            <Link to={gitHubInfo.courseLink}> React 2025Q3</Link>
+            <Link to={gitHubInfo.courseLink}> React 2025Q3 </Link>
           </span>
           <span>
-            is a third course by RSSchool what I frequenting. I hope to find
+            - is a third course by RSSchool what I frequenting. I hope to find
             work as a developer soon!
           </span>
           <p>Thank you for attention and enjoy my application about pokemon!</p>
