@@ -4,14 +4,18 @@ import { Link } from 'react-router';
 import { PATH } from '../../configs/routesConfig';
 import Loading from '../loading/Loading';
 import { useDispatch, useSelector } from 'react-redux';
-import type { RootState } from '../../store/store';
 import { replacePathParams } from '../../utils/replacePathParams';
 import { setItem } from '../../store/slices/itemSlice';
+import {
+  itemSelector,
+  pageNumberSelector,
+  searchValueSelector,
+} from '../../store/selectors';
 
 export default function Item() {
-  const page = useSelector((state: RootState) => state.page.value);
-  const search = useSelector((state: RootState) => state.search.value);
-  const item = useSelector((state: RootState) => state.item);
+  const page = useSelector(pageNumberSelector);
+  const search = useSelector(searchValueSelector);
+  const item = useSelector(itemSelector);
   const dispatch = useDispatch();
 
   return (

@@ -4,7 +4,7 @@ import styles from './about.module.scss';
 import { gitHubInfo } from '../footer/Footer';
 import { PATH } from '../../configs/routesConfig';
 import { useSelector } from 'react-redux';
-import type { RootState } from '../../store/store';
+import { themesSelector } from '../../store/selectors';
 const INFO = {
   name: 'Yuliya Adamovich',
   role: 'Frontend Developer',
@@ -13,7 +13,7 @@ const INFO = {
 };
 function About() {
   const navigate = useNavigate();
-  const isDarkTheme = useSelector((state: RootState) => state.themes);
+  const isDarkTheme = useSelector(themesSelector);
   return (
     <section className={styles.about}>
       <button

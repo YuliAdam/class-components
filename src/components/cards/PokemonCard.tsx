@@ -2,13 +2,13 @@ import styles from './card.module.scss';
 import type { IPokemon } from '../../types/types';
 import capitalizeFirstLetter from '../../utils/capitalizeFirstLetter';
 import { useDispatch, useSelector } from 'react-redux';
-import type { RootState } from '../../store/store';
 import {
   addInWishList,
   removeFromWishList,
 } from '../../store/slices/wishListSlice';
 import { useRef } from 'react';
 import Heart from '../../assets/img/heart';
+import { wishListSelector } from '../../store/selectors';
 
 interface Props {
   pokemon: IPokemon;
@@ -17,7 +17,7 @@ interface Props {
 }
 
 export default function PokemonCard({ pokemon, onClick, className }: Props) {
-  const wishList = useSelector((state: RootState) => state.wishList);
+  const wishList = useSelector(wishListSelector);
   const dispatch = useDispatch();
   const iconRef = useRef<HTMLInputElement>(null);
 

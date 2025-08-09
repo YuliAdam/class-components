@@ -4,6 +4,7 @@ import pageReducer from './slices/pageSlice';
 import itemReducer from './slices/itemSlice';
 import wishListReducer from './slices/wishListSlice';
 import themesReducer from './slices/themesSlice';
+import { pokemonApiSlice } from '../api/apiSlice';
 
 export const store = configureStore({
   reducer: {
@@ -12,6 +13,10 @@ export const store = configureStore({
     item: itemReducer,
     wishList: wishListReducer,
     themes: themesReducer,
+    [pokemonApiSlice.reducerPath]: pokemonApiSlice.reducer,
+  },
+  middleware: (getDefaultMiddleware) => {
+    return getDefaultMiddleware().concat(pokemonApiSlice.middleware);
   },
 });
 

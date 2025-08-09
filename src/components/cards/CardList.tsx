@@ -11,14 +11,23 @@ import { PATH } from '../../configs/routesConfig';
 import useLocalStorage from '../../hooks/useLocalStorage';
 import { getSearchValueFromLocalStorage } from '../../localStorage/localStorage';
 import { useDispatch, useSelector } from 'react-redux';
-import type { RootState } from '../../store/store';
 import { changePageSlice, setPage } from '../../store/slices/pageSlice';
 import { setItem, setLoadingItem } from '../../store/slices/itemSlice';
 import {
   getPokemonAtPage,
   getPokemonByAbilityOrType,
   getPokemonBySearch,
-} from '../../service/apiMethods';
+} from '../../api/apiMethods';
+import {
+  useGetAllRequestQuery,
+  useGetByNameOrIndexRequestQuery,
+} from '../../api/apiSlice';
+import { requestOptions } from '../../api/apiRequests';
+import {
+  itemSelector,
+  pageNumberSelector,
+  searchValueSelector,
+} from '../../store/selectors';
 
 interface State {
   items: IPokemon[];
@@ -39,38 +48,116 @@ export default function CardList() {
   const [hasError, setError] = useState(false);
   const navigate = useNavigate();
   const localStorageState = useLocalStorage()[0];
-  const search = useSelector((state: RootState) => state.search.value);
-  const page = useSelector((state: RootState) => state.page.value);
-  const item = useSelector((state: RootState) => state.item);
+  const search = useSelector(searchValueSelector);
+  const page = useSelector(pageNumberSelector);
+  const item = useSelector(itemSelector);
   const dispatch = useDispatch();
+  const { data: pokemonsAtPageResponse, isLoading: pageIsLoading } =
+    useGetAllRequestQuery({
+      option: requestOptions.pokemon,
+      params: { limit: ITEMS_AT_PAGE, offset: page * ITEMS_AT_PAGE },
+    });
+
+  const {
+    currentData: pokemonsByTypeResponse,
+    isLoading: typeIsLoading,
+    isError: isTypeErrorRequest,
+    refetch: pokemonByTypeRefetch,
+  } = useGetByNameOrIndexRequestQuery({
+    option: requestOptions.type,
+    param: search,
+  });
+
+  const {
+    currentData: pokemonsByNameResponse,
+    isLoading: nameIsLoading,
+    isError: isNameErrorRequest,
+    refetch: pokemonByNameRefetch,
+  } = useGetByNameOrIndexRequestQuery({
+    option: requestOptions.pokemon,
+    param: search,
+  });
+
+  const {
+    currentData: pokemonsByAbilityResponse,
+    isLoading: abilityIsLoading,
+    isError: isAbilityErrorRequest,
+    refetch: pokemonByAbilityRefetch,
+  } = useGetByNameOrIndexRequestQuery({
+    option: requestOptions.ability,
+    param: search,
+  });
+
+  useEffect(() => {
+    if (
+      isNameErrorRequest &&
+      isAbilityErrorRequest &&
+      isTypeErrorRequest &&
+      search
+    ) {
+      setState({
+        items: [],
+        isSearchMood: true,
+        isLoading: false,
+      });
+      navigate(
+        replacePathParams(PATH.pokemonNotFoundParams, {
+          searchParam: search,
+          page: (page + 1).toString(),
+        }),
+        { replace: true }
+      );
+    }
+  }, [isNameErrorRequest && isAbilityErrorRequest && isTypeErrorRequest]);
 
   useEffect(() => {
     try {
-      if (!getSearchValueFromLocalStorage()) {
-        getPokemonAtPage(0, ITEMS_AT_PAGE).then((res) => {
+      if (!getSearchValueFromLocalStorage() && !pageIsLoading) {
+        getPokemonAtPage(pokemonsAtPageResponse).then((res) => {
           setState({
             items: res,
             isSearchMood: false,
             isLoading: false,
           });
         });
-        navigate(replacePathParams(PATH.pokemonParams, { page: '1' }), {
-          replace: true,
-        });
-      } else {
-        updateCards();
         navigate(
           replacePathParams(PATH.pokemonParams, {
-            page: '1',
-            searchParam: search,
+            page: (page + 1).toString(),
           }),
-          { replace: true }
+          {
+            replace: true,
+          }
         );
+      } else {
+        pokemonByNameRefetch();
+        pokemonByAbilityRefetch();
+        pokemonByTypeRefetch();
+        console.log(
+          pokemonsByNameResponse,
+          pokemonsByAbilityResponse,
+          pokemonsByTypeResponse
+        );
+        updateCards().then(() => {
+          navigate(
+            replacePathParams(PATH.pokemonParams, {
+              page: (page + 1).toString(),
+              searchParam: search,
+            }),
+            { replace: true }
+          );
+        });
       }
     } catch (err) {
       if (err instanceof Error) generateError(err.message);
     }
-  }, [search, localStorageState]);
+  }, [
+    localStorageState,
+    search,
+    pokemonsAtPageResponse,
+    pokemonsByAbilityResponse,
+    pokemonsByNameResponse,
+    pokemonsByTypeResponse,
+  ]);
 
   function generateError(message: string) {
     console.log(message);
@@ -79,7 +166,7 @@ export default function CardList() {
 
   function setLoadingMood() {
     setState({
-      items: [],
+      items: state.items,
       isSearchMood: state.isSearchMood,
       isLoading: true,
     });
@@ -87,18 +174,34 @@ export default function CardList() {
 
   async function updateCards() {
     try {
+      console.log('update');
       setLoadingMood();
       if (isValidRequestString(search)) {
-        const pokemon = await getPokemonBySearch(search);
+        const pokemon =
+          !nameIsLoading &&
+          !isNameErrorRequest &&
+          pokemonsByNameResponse &&
+          getPokemonBySearch(pokemonsByNameResponse);
         if (pokemon) {
+          console.log(pokemon);
           setState({
             items: [pokemon],
             isSearchMood: true,
             isLoading: false,
           });
         } else {
+          const pokemonsByAbility =
+            !isAbilityErrorRequest &&
+            !abilityIsLoading &&
+            pokemonsByAbilityResponse &&
+            (await getPokemonByAbilityOrType(pokemonsByAbilityResponse));
           const pokemonsByAbilityOrType =
-            await getPokemonByAbilityOrType(search);
+            pokemonsByAbility ||
+            (!isTypeErrorRequest &&
+              !typeIsLoading &&
+              pokemonsByTypeResponse &&
+              (await getPokemonByAbilityOrType(pokemonsByTypeResponse)));
+          console.log(pokemonsByAbilityOrType);
           if (pokemonsByAbilityOrType) {
             setState({
               items: pokemonsByAbilityOrType,
@@ -114,7 +217,7 @@ export default function CardList() {
             navigate(
               replacePathParams(PATH.pokemonNotFoundParams, {
                 searchParam: search,
-                page: '1',
+                page: (page + 1).toString(),
               }),
               { replace: true }
             );
@@ -122,10 +225,12 @@ export default function CardList() {
           dispatch(setPage(0));
         }
       } else {
-        setState({
-          items: await getPokemonAtPage(0, ITEMS_AT_PAGE),
-          isSearchMood: false,
-          isLoading: false,
+        getPokemonAtPage(pokemonsAtPageResponse).then((res) => {
+          setState({
+            items: res,
+            isSearchMood: false,
+            isLoading: false,
+          });
         });
       }
     } catch (err) {
@@ -151,11 +256,6 @@ export default function CardList() {
         }),
         { replace: true }
       );
-      setState({
-        items: await getPokemonAtPage(page + num, ITEMS_AT_PAGE),
-        isSearchMood: false,
-        isLoading: false,
-      });
     } else {
       navigate(
         replacePathParams(PATH.pokemonParams, {
@@ -210,7 +310,7 @@ export default function CardList() {
         }),
         { replace: true }
       );
-      const pokemon = await getPokemonBySearch(item.name);
+      const pokemon = getPokemonBySearch(pokemonsByNameResponse);
       dispatch(setItem(pokemon));
     };
   }
@@ -221,7 +321,7 @@ export default function CardList() {
     }
   }
 
-  return state.isLoading ? (
+  return state.isLoading || state.items.length === 0 ? (
     <Loading />
   ) : (
     <>
