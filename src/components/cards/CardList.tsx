@@ -55,14 +55,16 @@ export default function CardList() {
   const { data: pokemonsAtPageResponse, isLoading: pageIsLoading } =
     useGetAllRequestQuery({
       option: requestOptions.pokemon,
-      params: { limit: ITEMS_AT_PAGE, offset: page * ITEMS_AT_PAGE },
+      params: {
+        limit: ITEMS_AT_PAGE,
+        offset: (!state.isSearchMood ? page : 0) * ITEMS_AT_PAGE,
+      },
     });
 
   const {
     currentData: pokemonsByTypeResponse,
     isLoading: typeIsLoading,
     isError: isTypeErrorRequest,
-    refetch: pokemonByTypeRefetch,
   } = useGetByNameOrIndexRequestQuery({
     option: requestOptions.type,
     param: search,
@@ -72,7 +74,6 @@ export default function CardList() {
     currentData: pokemonsByNameResponse,
     isLoading: nameIsLoading,
     isError: isNameErrorRequest,
-    refetch: pokemonByNameRefetch,
   } = useGetByNameOrIndexRequestQuery({
     option: requestOptions.pokemon,
     param: search,
@@ -82,7 +83,6 @@ export default function CardList() {
     currentData: pokemonsByAbilityResponse,
     isLoading: abilityIsLoading,
     isError: isAbilityErrorRequest,
-    refetch: pokemonByAbilityRefetch,
   } = useGetByNameOrIndexRequestQuery({
     option: requestOptions.ability,
     param: search,
@@ -129,9 +129,6 @@ export default function CardList() {
           }
         );
       } else {
-        pokemonByNameRefetch();
-        pokemonByAbilityRefetch();
-        pokemonByTypeRefetch();
         console.log(
           pokemonsByNameResponse,
           pokemonsByAbilityResponse,
