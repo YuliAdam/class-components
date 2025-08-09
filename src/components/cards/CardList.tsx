@@ -88,6 +88,12 @@ export default function CardList() {
     param: search,
   });
 
+  const { currentData: selectedPokemon, isLoading: selectedPokemonIsLoading } =
+    useGetByNameOrIndexRequestQuery({
+      option: requestOptions.pokemon,
+      param: item.value?.name || '',
+    });
+
   useEffect(() => {
     if (
       isNameErrorRequest &&
@@ -129,11 +135,6 @@ export default function CardList() {
           }
         );
       } else {
-        console.log(
-          pokemonsByNameResponse,
-          pokemonsByAbilityResponse,
-          pokemonsByTypeResponse
-        );
         updateCards().then(() => {
           navigate(
             replacePathParams(PATH.pokemonParams, {
@@ -171,7 +172,6 @@ export default function CardList() {
 
   async function updateCards() {
     try {
-      console.log('update');
       setLoadingMood();
       if (isValidRequestString(search)) {
         const pokemon =
@@ -180,7 +180,6 @@ export default function CardList() {
           pokemonsByNameResponse &&
           getPokemonBySearch(pokemonsByNameResponse);
         if (pokemon) {
-          console.log(pokemon);
           setState({
             items: [pokemon],
             isSearchMood: true,
@@ -198,7 +197,6 @@ export default function CardList() {
               !typeIsLoading &&
               pokemonsByTypeResponse &&
               (await getPokemonByAbilityOrType(pokemonsByTypeResponse)));
-          console.log(pokemonsByAbilityOrType);
           if (pokemonsByAbilityOrType) {
             setState({
               items: pokemonsByAbilityOrType,
@@ -296,6 +294,7 @@ export default function CardList() {
       }
     });
   }
+
   function selectItem(item: IPokemon) {
     return async () => {
       dispatch(setLoadingItem(true));
@@ -307,8 +306,11 @@ export default function CardList() {
         }),
         { replace: true }
       );
-      const pokemon = getPokemonBySearch(pokemonsByNameResponse);
-      dispatch(setItem(pokemon));
+      dispatch(setItem(item));
+      getPokemonBySearch(selectedPokemon);
+      setTimeout(() => {
+        if (!selectedPokemonIsLoading) dispatch(setLoadingItem(false));
+      }, 300);
     };
   }
 

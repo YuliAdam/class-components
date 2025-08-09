@@ -17,7 +17,6 @@ const itemSlice = createSlice({
   reducers: {
     setItem(state, action: PayloadAction<IPokemon | null>) {
       state.value = action.payload;
-      state.isLoading = false;
     },
     setLoadingItem(state, action: PayloadAction<boolean>) {
       state.isLoading = action.payload;
