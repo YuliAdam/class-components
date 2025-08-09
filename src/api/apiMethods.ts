@@ -26,12 +26,14 @@ export function getPokemonObj(pokemon: IPokemonResponse) {
 }
 
 export async function getPokemonAtPage(data: IAllPokemonResponse) {
-  return await Promise.all(
-    data.results.map(async (pokemon: IObjectInfoResponse) => {
-      const response = await (await fetch(pokemon.url)).json();
-      return getPokemonObj(response);
-    })
-  );
+  return data
+    ? await Promise.all(
+        data.results.map(async (pokemon: IObjectInfoResponse) => {
+          const response = await (await fetch(pokemon.url)).json();
+          return getPokemonObj(response);
+        })
+      )
+    : [];
 }
 
 export function getPokemonBySearch(pokemon: IPokemonResponse) {

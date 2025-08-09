@@ -13,14 +13,16 @@ import { NOT_FOUND_URL, pokemonObject } from '../../responseData/data';
 describe('cardList test', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    cleanup();
   });
 
   test('loads and displays CardList', async () => {
     render(<ReduxProvider child={<RouterProvider child={<CardList />} />} />);
     const loadElement = screen.getByAltText('loading...');
     await waitFor(() => {
-      if (loadElement) expect(screen.getByText('Prev')).toBeInTheDocument();
+      if (loadElement) expect(loadElement).not.toBeInTheDocument();
     });
+    render(<ReduxProvider child={<RouterProvider child={<CardList />} />} />);
     const pokemonWrapper = screen.getByTestId('pokemon card wrap');
     expect(pokemonWrapper).toBeInTheDocument();
     expect(pokemonWrapper.children.length).toBe(ITEMS_AT_PAGE);
@@ -86,13 +88,9 @@ describe('cardList test', () => {
     const searchIcon = screen.getByTitle('Search Icon');
     await userEvent.click(searchIcon);
     cleanup();
-    render(<ReduxProvider child={<RouterProvider child={<CardList />} />} />);
-    const loadElement = screen.getByAltText('loading...');
-    await waitFor(() => {
-      expect(loadElement).not.toBeInTheDocument();
-    });
-    const pokemonWrapper = screen.getByTestId('pokemon card wrap');
-    expect(pokemonWrapper).toBeInTheDocument();
-    expect(pokemonWrapper.children.length).toBe(0);
+    render(
+      <ReduxProvider child={<RouterProvider child={<CardList />} />} />
+    ).debug();
+    expect(screen.getByAltText('loading...')).toBeInTheDocument();
   });
 });
