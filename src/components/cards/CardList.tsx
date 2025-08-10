@@ -49,14 +49,18 @@ export default function CardList() {
   const page = useSelector(pageNumberSelector);
   const item = useSelector(itemSelector);
   const dispatch = useDispatch();
-  const { data: pokemonsAtPageResponse, isLoading: pageIsLoading } =
-    useGetAllRequestQuery({
-      option: requestOptions.pokemon,
-      params: {
-        limit: ITEMS_AT_PAGE,
-        offset: (!state.isSearchMood ? page : 0) * ITEMS_AT_PAGE,
-      },
-    });
+  const {
+    data: pokemonsAtPageResponse,
+    isLoading: pageIsLoading,
+    isError: isPageError,
+    error,
+  } = useGetAllRequestQuery({
+    option: requestOptions.pokemon,
+    params: {
+      limit: ITEMS_AT_PAGE,
+      offset: (!state.isSearchMood ? page : 0) * ITEMS_AT_PAGE,
+    },
+  });
 
   const {
     currentData: pokemonsByTypeResponse,
@@ -117,6 +121,9 @@ export default function CardList() {
     try {
       if (!getSearchValueFromLocalStorage()) {
         if (!pageIsLoading && pokemonsAtPageResponse) {
+          if (isPageError) {
+            throw error;
+          }
           setState({
             items: pokemonsAtPageResponse.results,
             isSearchMood: false,
