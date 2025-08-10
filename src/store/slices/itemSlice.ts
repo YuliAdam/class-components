@@ -1,8 +1,8 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
-import type { IPokemon } from '../../types/types';
+import type { IObjectInfoResponse } from '../../types/types';
 
 interface IItem {
-  value: IPokemon | null;
+  value: IObjectInfoResponse | null;
   isLoading: boolean;
 }
 
@@ -15,7 +15,7 @@ const itemSlice = createSlice({
   name: 'itemSlice',
   initialState,
   reducers: {
-    setItem(state, action: PayloadAction<IPokemon | null>) {
+    setItem(state, action: PayloadAction<IObjectInfoResponse | null>) {
       state.value = action.payload;
     },
     setLoadingItem(state, action: PayloadAction<boolean>) {

@@ -16,7 +16,10 @@ export const store = configureStore({
     [pokemonApiSlice.reducerPath]: pokemonApiSlice.reducer,
   },
   middleware: (getDefaultMiddleware) => {
-    return getDefaultMiddleware().concat(pokemonApiSlice.middleware);
+    return getDefaultMiddleware({
+      immutableCheck: false,
+      serializableCheck: false,
+    }).concat(pokemonApiSlice.middleware);
   },
 });
 

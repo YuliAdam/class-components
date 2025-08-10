@@ -1,12 +1,7 @@
-import type {
-  IAbilityOrTypeResponse,
-  IAllPokemonResponse,
-  IObjectInfoResponse,
-  IPokemonResponse,
-} from '../types/types';
+import type { IObjectInfoResponse, IPokemonResponse } from '../types/types';
 import getColor from '../utils/getColor';
 
-export function getPokemonObj(pokemon: IPokemonResponse) {
+export function parsePokemonObj(pokemon: IPokemonResponse) {
   return {
     id: pokemon.id,
     abilities: [
@@ -23,28 +18,4 @@ export function getPokemonObj(pokemon: IPokemonResponse) {
     ],
     color: getColor(pokemon.height, pokemon.base_experience, pokemon.weight),
   };
-}
-
-export async function getPokemonAtPage(data: IAllPokemonResponse) {
-  return data
-    ? await Promise.all(
-        data.results.map(async (pokemon: IObjectInfoResponse) => {
-          const response = await (await fetch(pokemon.url)).json();
-          return getPokemonObj(response);
-        })
-      )
-    : [];
-}
-
-export function getPokemonBySearch(pokemon: IPokemonResponse) {
-  return pokemon && getPokemonObj(pokemon);
-}
-
-export async function getPokemonByAbilityOrType(data: IAbilityOrTypeResponse) {
-  return await Promise.all(
-    data.pokemon.map(async (item: { pokemon: IObjectInfoResponse }) => {
-      const response = await (await fetch(item.pokemon.url)).json();
-      return getPokemonObj(response);
-    })
-  );
 }
