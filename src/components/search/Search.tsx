@@ -1,9 +1,4 @@
-import {
-  useEffect,
-  useState,
-  type ChangeEvent,
-  type KeyboardEvent,
-} from 'react';
+import { useState, type ChangeEvent, type KeyboardEvent } from 'react';
 import Input from './Input';
 import SearchIcon from '../../assets/img/searchIcon';
 import styles from './search.module.scss';
@@ -19,7 +14,6 @@ import {
   isDarkThemeSelector,
   searchValueSelector,
 } from '../../store/selectors';
-import { useInvalidateCacheMutation } from '../../api/apiSlice';
 
 export default function Search() {
   const search = useSelector(searchValueSelector);
@@ -28,12 +22,6 @@ export default function Search() {
   const [value, setValue] = useState(search);
   const navigate = useNavigate();
   const setLocalStorage = useLocalStorage()[1];
-  const [isClearCache, setClearCache] = useState(false);
-  const clearCacheRequest = useInvalidateCacheMutation();
-
-  useEffect(() => {
-    console.log(clearCacheRequest, isClearCache);
-  }, []);
 
   function submitInput(text: string) {
     dispatch(setSearch(text.trim()));
@@ -67,11 +55,6 @@ export default function Search() {
     }
   }
 
-  function clearCache() {
-    setClearCache(true);
-    setTimeout(() => setClearCache(false), 1000);
-  }
-
   return (
     <section className={styles.search}>
       <div className={styles.search_wrap}>
@@ -99,9 +82,7 @@ export default function Search() {
             onClick={() => value && submitInput(value)}
           />
         </Link>
-        <button className={styles.clear_cache} onClick={clearCache}>
-          Clear cache
-        </button>
+        <button className={styles.clear_cache}>Clear cache</button>
       </div>
     </section>
   );
