@@ -22,7 +22,9 @@ describe('cardList test', () => {
     await waitFor(() => {
       if (loadElement) expect(loadElement).not.toBeInTheDocument();
     });
-    render(<ReduxProvider child={<RouterProvider child={<CardList />} />} />);
+    await waitFor(() => {
+      expect(screen.findAllByTestId('pokemon card wrap')).toBeTruthy();
+    });
     const pokemonWrapper = screen.getByTestId('pokemon card wrap');
     expect(pokemonWrapper).toBeInTheDocument();
     expect(pokemonWrapper.children.length).toBe(ITEMS_AT_PAGE);
@@ -35,10 +37,15 @@ describe('cardList test', () => {
     const searchIcon = screen.getByTitle('Search Icon');
     await userEvent.click(searchIcon);
     cleanup();
-    render(<ReduxProvider child={<RouterProvider child={<CardList />} />} />);
+    render(
+      <ReduxProvider child={<RouterProvider child={<CardList />} />} />
+    ).debug();
     const loadElement = screen.getByAltText('loading...');
     await waitFor(() => {
       expect(loadElement).not.toBeInTheDocument();
+    });
+    await waitFor(() => {
+      expect(screen.findAllByTestId('pokemon card wrap')).toBeTruthy();
     });
     const pokemonWrapper = screen.getByTestId('pokemon card wrap');
     expect(pokemonWrapper).toBeInTheDocument();
@@ -88,9 +95,7 @@ describe('cardList test', () => {
     const searchIcon = screen.getByTitle('Search Icon');
     await userEvent.click(searchIcon);
     cleanup();
-    render(
-      <ReduxProvider child={<RouterProvider child={<CardList />} />} />
-    ).debug();
+    render(<ReduxProvider child={<RouterProvider child={<CardList />} />} />);
     expect(screen.getByAltText('loading...')).toBeInTheDocument();
   });
 });

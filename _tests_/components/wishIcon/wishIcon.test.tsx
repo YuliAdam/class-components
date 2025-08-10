@@ -1,14 +1,14 @@
-import { cleanup, render, screen } from '@testing-library/react';
+import { cleanup, render, screen, waitFor } from '@testing-library/react';
 import { WishIcon } from '../../../src/components/wishList/WishIcon';
 import PokemonCard from '../../../src/components/cards/PokemonCard';
 import { beforeAll, describe, expect, test, vi } from 'vitest';
 import '@testing-library/jest-dom';
 import ReduxProvider from '../../testUtils/ReduxProvider';
-import { testPokemon } from '../../responseData/data';
+import { pokemonData } from '../../responseData/data';
 import { userEvent } from '@testing-library/user-event';
 
 const mockDate = {
-  pokemon: testPokemon,
+  pokemon: pokemonData,
   onClick: vi.fn(),
   className: '',
 };
@@ -16,6 +16,11 @@ const mockDate = {
 describe('wish icon test', () => {
   beforeAll(async () => {
     render(<ReduxProvider child={<PokemonCard {...mockDate} />} />);
+    await waitFor(() => {
+      expect(screen.findAllByTitle('Heart')).toBeTruthy();
+    });
+    cleanup();
+    render(<ReduxProvider child={<PokemonCard {...mockDate} />} />).debug();
     const heart = screen.getByTitle('Heart');
     await userEvent.click(heart.parentElement || heart);
     cleanup();

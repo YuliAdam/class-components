@@ -37,6 +37,12 @@ export const handlers = [
   http.get(pokemonObject.url, () => {
     return HttpResponse.json(getPokemonByUrlOrNameData);
   }),
+  http.get(
+    getUrlByRequestOption(requestOptions.pokemon).concat('/undefined'),
+    () => {
+      return HttpResponse.json(getPokemonByUrlOrNameData);
+    }
+  ),
 
   http.get(
     getUrlByRequestOption(requestOptions.pokemon).concat(
