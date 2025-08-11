@@ -14,6 +14,7 @@ import {
   isDarkThemeSelector,
   searchValueSelector,
 } from '../../store/selectors';
+import { pokemonApiSlice } from '../../api/apiSlice';
 
 export default function Search() {
   const search = useSelector(searchValueSelector);
@@ -54,6 +55,9 @@ export default function Search() {
       );
     }
   }
+  function invalidCache() {
+    dispatch(pokemonApiSlice.util.resetApiState());
+  }
 
   return (
     <section className={styles.search}>
@@ -82,8 +86,10 @@ export default function Search() {
             onClick={() => value && submitInput(value)}
           />
         </Link>
-        <button className={styles.clear_cache}>Clear cache</button>
       </div>
+      <button className={styles.clear_cache} onClick={invalidCache}>
+        Invalid cache
+      </button>
     </section>
   );
 }
