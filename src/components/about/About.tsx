@@ -1,10 +1,10 @@
 import { Link, useNavigate } from 'react-router';
 import GitHubLogo from '../../assets/img/github-logo';
 import styles from './about.module.scss';
-import { gitHubInfo } from '../footer/Footer';
 import { PATH } from '../../configs/routesConfig';
 import { useSelector } from 'react-redux';
 import { themesSelector } from '../../store/selectors';
+import { gitHubInfo } from '../../assets/authorInfo';
 const INFO = {
   name: 'Yuliya Adamovich',
   role: 'Frontend Developer',
