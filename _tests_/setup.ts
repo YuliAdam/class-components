@@ -3,10 +3,7 @@ import { cleanup } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { setupServer } from 'msw/node';
 import { http, HttpResponse } from 'msw';
-import {
-  getUrlByRequestOption,
-  requestOptions,
-} from '../src/service/apiRequests';
+import { getUrlByRequestOption } from './testUtils/getUrlByRequestsOption';
 import { ITEMS_AT_PAGE } from '../src/components/cards/CardList';
 import {
   ERROR_URL,
@@ -18,6 +15,7 @@ import {
   notFoundResponse,
   pokemonObject,
 } from './responseData/data';
+import { url, requestOptions } from '../src/configs/apiConfig';
 
 export const handlers = [
   http.get(
@@ -39,6 +37,12 @@ export const handlers = [
   http.get(pokemonObject.url, () => {
     return HttpResponse.json(getPokemonByUrlOrNameData);
   }),
+  http.get(
+    getUrlByRequestOption(requestOptions.pokemon).concat('/undefined'),
+    () => {
+      return HttpResponse.json(getPokemonByUrlOrNameData);
+    }
+  ),
 
   http.get(
     getUrlByRequestOption(requestOptions.pokemon).concat(
@@ -85,11 +89,33 @@ export const handlers = [
       return HttpResponse.json(...notFoundResponse);
     }
   ),
+  http.get(
+    getUrlByRequestOption(requestOptions.ability).concat(
+      `/${pokemonObject.name}`
+    ),
+    () => {
+      return HttpResponse.json(...notFoundResponse);
+    }
+  ),
 
   http.get(
     getUrlByRequestOption(requestOptions.type).concat(
       `/${pokemonObject.types[0]}`
     ),
+    () => {
+      return HttpResponse.json(getPokemonByAbilityOrTypeData);
+    }
+  ),
+  http.get(
+    getUrlByRequestOption(requestOptions.type).concat(
+      `/${pokemonObject.abilities[0]}`
+    ),
+    () => {
+      return HttpResponse.json(getPokemonByAbilityOrTypeData);
+    }
+  ),
+  http.get(
+    getUrlByRequestOption(requestOptions.type).concat(`/${pokemonObject.name}`),
     () => {
       return HttpResponse.json(getPokemonByAbilityOrTypeData);
     }
@@ -106,6 +132,9 @@ export const handlers = [
       return HttpResponse.json(...errorResponse);
     }
   ),
+  http.get(url.concat(ERROR_URL), () => {
+    return HttpResponse.json(...errorResponse);
+  }),
 ];
 
 export const server = setupServer(...handlers);

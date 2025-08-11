@@ -7,14 +7,17 @@ import { PATH } from '../../configs/routesConfig';
 import { replacePathParams } from '../../utils/replacePathParams';
 import useLocalStorage from '../../hooks/useLocalStorage';
 import { useDispatch, useSelector } from 'react-redux';
-import type { RootState } from '../../store/store';
 import { setSearch } from '../../store/slices/searchSlice';
 import { setPage } from '../../store/slices/pageSlice';
 import { setItem } from '../../store/slices/itemSlice';
+import {
+  isDarkThemeSelector,
+  searchValueSelector,
+} from '../../store/selectors';
 
 export default function Search() {
-  const search = useSelector((state: RootState) => state.search.value);
-  const isDarkTheme = useSelector((state: RootState) => state.themes.isDark);
+  const search = useSelector(searchValueSelector);
+  const isDarkTheme = useSelector(isDarkThemeSelector);
   const dispatch = useDispatch();
   const [value, setValue] = useState(search);
   const navigate = useNavigate();
@@ -79,6 +82,7 @@ export default function Search() {
             onClick={() => value && submitInput(value)}
           />
         </Link>
+        <button className={styles.clear_cache}>Clear cache</button>
       </div>
     </section>
   );

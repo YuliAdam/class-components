@@ -1,18 +1,18 @@
 import styles from './wishList.module.scss';
 import { useDispatch, useSelector } from 'react-redux';
-import type { RootState } from '../../store/store';
 import Heart from '../../assets/img/heart';
 import HeartOff from '../../assets/img/heartOff';
 import Download from '../../assets/img/download';
 import { clearWishList } from '../../store/slices/wishListSlice';
 import { useRef } from 'react';
 import saveFile from '../../fileSystem/saveFile';
+import { isDarkThemeSelector, wishListSelector } from '../../store/selectors';
 
 export function WishIcon() {
-  const wishList = useSelector((state: RootState) => state.wishList);
+  const wishList = useSelector(wishListSelector);
   const dispatch = useDispatch();
   const downloadRef = useRef<HTMLAnchorElement>(null);
-  const isDarkTheme = useSelector((state: RootState) => state.themes.isDark);
+  const isDarkTheme = useSelector(isDarkThemeSelector);
 
   return wishList.value.length ? (
     <div className={`${styles.wish_list} ${isDarkTheme ? styles.dark : ''}`}>

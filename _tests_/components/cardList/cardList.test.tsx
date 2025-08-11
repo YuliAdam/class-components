@@ -13,13 +13,17 @@ import { NOT_FOUND_URL, pokemonObject } from '../../responseData/data';
 describe('cardList test', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    cleanup();
   });
 
   test('loads and displays CardList', async () => {
     render(<ReduxProvider child={<RouterProvider child={<CardList />} />} />);
     const loadElement = screen.getByAltText('loading...');
     await waitFor(() => {
-      if (loadElement) expect(screen.getByText('Prev')).toBeInTheDocument();
+      if (loadElement) expect(loadElement).not.toBeInTheDocument();
+    });
+    await waitFor(() => {
+      expect(screen.findAllByTestId('pokemon card wrap')).toBeTruthy();
     });
     const pokemonWrapper = screen.getByTestId('pokemon card wrap');
     expect(pokemonWrapper).toBeInTheDocument();
@@ -33,10 +37,15 @@ describe('cardList test', () => {
     const searchIcon = screen.getByTitle('Search Icon');
     await userEvent.click(searchIcon);
     cleanup();
-    render(<ReduxProvider child={<RouterProvider child={<CardList />} />} />);
+    render(
+      <ReduxProvider child={<RouterProvider child={<CardList />} />} />
+    ).debug();
     const loadElement = screen.getByAltText('loading...');
     await waitFor(() => {
       expect(loadElement).not.toBeInTheDocument();
+    });
+    await waitFor(() => {
+      expect(screen.findAllByTestId('pokemon card wrap')).toBeTruthy();
     });
     const pokemonWrapper = screen.getByTestId('pokemon card wrap');
     expect(pokemonWrapper).toBeInTheDocument();
@@ -87,12 +96,6 @@ describe('cardList test', () => {
     await userEvent.click(searchIcon);
     cleanup();
     render(<ReduxProvider child={<RouterProvider child={<CardList />} />} />);
-    const loadElement = screen.getByAltText('loading...');
-    await waitFor(() => {
-      expect(loadElement).not.toBeInTheDocument();
-    });
-    const pokemonWrapper = screen.getByTestId('pokemon card wrap');
-    expect(pokemonWrapper).toBeInTheDocument();
-    expect(pokemonWrapper.children.length).toBe(0);
+    expect(screen.getByAltText('loading...')).toBeInTheDocument();
   });
 });

@@ -1,6 +1,6 @@
 import { useSelector } from 'react-redux';
 import styles from './pagination.module.scss';
-import type { RootState } from '../../store/store';
+import { isDarkThemeSelector } from '../../store/selectors';
 
 interface Props {
   pageNum: number;
@@ -15,7 +15,7 @@ export default function Pagination({
   prevClick,
   nextClick,
 }: Props) {
-  const isDarkTheme = useSelector((state: RootState) => state.themes.isDark);
+  const isDarkTheme = useSelector(isDarkThemeSelector);
   return (
     <section className={styles.pagination}>
       <div
