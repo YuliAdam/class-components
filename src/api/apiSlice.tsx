@@ -20,11 +20,11 @@ export const pokemonApiSlice = createApi({
             ? arg.option.concat(
                 `?offset=${arg.params.offset}&limit=${arg.params.limit}`
               )
-            : '',
+            : 'error',
       }),
       getByNameOrIndexRequest: builder.query({
         query: (arg: { option: string; param: string }) =>
-          arg.param ? arg.option.concat(`/${arg.param}`) : '',
+          arg.param ? arg.option.concat(`/${arg.param}`) : 'error',
       }),
       getPokemonByUrl: builder.query({
         query: (pokemonUrl: string) => pokemonUrl,
