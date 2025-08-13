@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import styles from './card.module.scss';
 import type { IObjectInfoResponse } from '../../types/types';
 import PokemonCard from './PokemonCard';
@@ -51,6 +51,7 @@ export default function CardList() {
   const page = useSelector(pageNumberSelector);
   const item = useSelector(itemSelector);
   const dispatch = useDispatch();
+  const loadingTimeoutRef = useRef<number | null>(null);
   const {
     data: pokemonsAtPageResponse,
     isLoading: pageIsLoading,
@@ -106,11 +107,13 @@ export default function CardList() {
 
   useEffect(() => {
     if (search && isErrorSearch) {
+      console.log('notFound');
       setState({
         items: [],
         isSearchMood: true,
         isLoading: false,
       });
+      console.log(state);
       navigate(
         replacePathParams(PATH.pokemonNotFoundParams, {
           searchParam: search,
@@ -119,6 +122,11 @@ export default function CardList() {
         { replace: true }
       );
     }
+    return () => {
+      if (loadingTimeoutRef.current) {
+        clearTimeout(loadingTimeoutRef.current);
+      }
+    };
   }, [isErrorSearch]);
 
   useEffect(() => {
@@ -162,11 +170,19 @@ export default function CardList() {
     pokemonsByAbilityResponse,
     pokemonsByNameResponse,
     pokemonsByTypeResponse,
-    pageIsLoading,
-    nameIsLoading,
-    abilityIsLoading,
-    typeIsLoading,
   ]);
+
+  useEffect(() => {
+    if (item.value) {
+      navigate(
+        replacePathParams(PATH.itemParams, {
+          searchParam: search,
+          page: (page + 1).toString(),
+          item: item.value?.name,
+        })
+      );
+    }
+  }, [pageIsLoading && nameIsLoading && abilityIsLoading && typeIsLoading]);
 
   function generateError(message: string) {
     console.log(message);
@@ -174,10 +190,12 @@ export default function CardList() {
   }
 
   function setLoadingMood() {
-    setState({
-      items: state.items,
-      isSearchMood: state.isSearchMood,
-      isLoading: true,
+    setState((prevState: State) => {
+      return {
+        items: prevState.items,
+        isSearchMood: prevState.isSearchMood,
+        isLoading: true,
+      };
     });
   }
 
@@ -268,7 +286,7 @@ export default function CardList() {
       );
       const copyItems = state.items.slice();
       setLoadingMood();
-      setTimeout(() => {
+      loadingTimeoutRef.current = setTimeout(() => {
         setState({
           items: copyItems,
           isSearchMood: true,
@@ -330,35 +348,41 @@ export default function CardList() {
     }
   }
 
-  return state.isLoading ||
-    !state.items ||
-    state.items.length === 0 ||
-    pageIsLoading ||
-    nameIsLoading ||
-    abilityIsLoading ||
-    typeIsLoading ? (
-    <Loading />
-  ) : (
-    <>
-      {generateErrorIfHasError()}
-      <section
-        className={
-          state.items.length === 1
-            ? styles.result
-            : item.value
-              ? styles.results_half
-              : styles.results
-        }
-        data-testid="pokemon card wrap"
-      >
-        {getPokemonCards()}
-      </section>
-      <Pagination
-        pageNum={page + 1}
-        prevClick={prevClick}
-        nextClick={nextClick}
-        hasNextPage={hasNextPage()}
-      />
-    </>
+  function getLoading() {
+    return state.isLoading ||
+      !state.items ||
+      state.items.length === 0 ||
+      pageIsLoading ||
+      nameIsLoading ||
+      abilityIsLoading ||
+      typeIsLoading ? (
+      <Loading />
+    ) : null;
+  }
+
+  return (
+    getLoading() || (
+      <>
+        {generateErrorIfHasError()}
+        <section
+          className={
+            state.items.length === 1
+              ? styles.result
+              : item.value
+                ? styles.results_half
+                : styles.results
+          }
+          data-testid="pokemon card wrap"
+        >
+          {getPokemonCards()}
+        </section>
+        <Pagination
+          pageNum={page + 1}
+          prevClick={prevClick}
+          nextClick={nextClick}
+          hasNextPage={hasNextPage()}
+        />
+      </>
+    )
   );
 }
