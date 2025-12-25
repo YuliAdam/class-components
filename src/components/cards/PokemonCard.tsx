@@ -46,7 +46,8 @@ export default function PokemonCard({ pokemon, onClick, className }: Props) {
   }
 
   useEffect(() => {
-    if (!isLoading && !isError) setState(parsePokemonObj(currentData));
+    if (!isLoading && !isError && currentData)
+      setState(parsePokemonObj(currentData));
   }, [currentData]);
 
   return (

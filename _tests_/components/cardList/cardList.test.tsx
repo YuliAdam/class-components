@@ -9,6 +9,7 @@ import RouterProvider from '../../testUtils/RouterProvider';
 import Search from '../../../src/components/search/Search';
 import { userEvent } from '@testing-library/user-event';
 import { NOT_FOUND_URL, pokemonObject } from '../../responseData/data';
+import capitalizeFirstLetter from '../../../src/utils/capitalizeFirstLetter';
 
 describe('cardList test', () => {
   beforeEach(() => {
@@ -25,9 +26,11 @@ describe('cardList test', () => {
     await waitFor(() => {
       expect(screen.findAllByTestId('pokemon card wrap')).toBeTruthy();
     });
-    const pokemonWrapper = screen.getByTestId('pokemon card wrap');
-    expect(pokemonWrapper).toBeInTheDocument();
-    expect(pokemonWrapper.children.length).toBe(ITEMS_AT_PAGE);
+    await waitFor(() => {
+      expect(
+        screen.getAllByText(capitalizeFirstLetter(pokemonObject.name))
+      ).toHaveLength(ITEMS_AT_PAGE);
+    });
   });
 
   test('get CardList if search name', async () => {
@@ -47,9 +50,11 @@ describe('cardList test', () => {
     await waitFor(() => {
       expect(screen.findAllByTestId('pokemon card wrap')).toBeTruthy();
     });
-    const pokemonWrapper = screen.getByTestId('pokemon card wrap');
-    expect(pokemonWrapper).toBeInTheDocument();
-    expect(pokemonWrapper.children.length).toBe(1);
+    await waitFor(() => {
+      expect(
+        screen.getAllByText(capitalizeFirstLetter(pokemonObject.name))
+      ).toHaveLength(1);
+    });
   });
 
   test('get CardList if search ability', async () => {
@@ -82,9 +87,14 @@ describe('cardList test', () => {
     await waitFor(() => {
       expect(loadElement).not.toBeInTheDocument();
     });
-    const pokemonWrapper = screen.getByTestId('pokemon card wrap');
-    expect(pokemonWrapper).toBeInTheDocument();
-    expect(pokemonWrapper.children.length).toBe(1);
+    await waitFor(() => {
+      expect(screen.findAllByTestId('pokemon card wrap')).toBeTruthy();
+    });
+    await waitFor(() => {
+      expect(
+        screen.getAllByText(capitalizeFirstLetter(pokemonObject.name))
+      ).toHaveLength(1);
+    });
   });
 
   test('get CardList if not found', async () => {

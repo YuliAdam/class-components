@@ -3,14 +3,7 @@ import GitHubLogo from '../../assets/img/github-logo';
 import RSSchoolLogo from '../../assets/img/rsSchool-logo';
 import styles from './footer.module.scss';
 import type { RootState } from '../../store/store';
-
-export const gitHubInfo = {
-  href: 'https://github.com/YuliAdam',
-  text: '@YuliAdam',
-  year: '2025',
-  schoolName: 'RSchool',
-  courseLink: 'https://rs.school/courses/reactjs',
-};
+import { gitHubInfo } from '../../assets/authorInfo';
 
 export default function Footer() {
   const isDarkTheme = useSelector((state: RootState) => state.themes.isDark);

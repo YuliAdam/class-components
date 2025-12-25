@@ -1,4 +1,8 @@
-import type { IObjectInfoResponse, IPokemonResponse } from '../types/types';
+import type {
+  IAbilityOrTypeResponse,
+  IObjectInfoResponse,
+  IPokemonResponse,
+} from '../types/types';
 import getColor from '../utils/getColor';
 
 export function parsePokemonObj(pokemon: IPokemonResponse) {
@@ -18,4 +22,12 @@ export function parsePokemonObj(pokemon: IPokemonResponse) {
     ],
     color: getColor(pokemon.height, pokemon.base_experience, pokemon.weight),
   };
+}
+
+export function getPokemonsFromAbilityOrTypeResponse(
+  response: IAbilityOrTypeResponse
+) {
+  return response.pokemon.map(
+    (item: { pokemon: IObjectInfoResponse }) => item.pokemon
+  );
 }

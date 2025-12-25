@@ -10,28 +10,24 @@ export const pokemonApiSlice = createApi({
   endpoints: (builder) => {
     return {
       getAllRequest: builder.query({
-        query: (arg: {
-          option: string;
-          params: { limit: number; offset: number };
-        }) =>
-          arg.option.concat(
-            `?offset=${arg.params.offset}&limit=${arg.params.limit}`
-          ),
-        providesTags: ['Pokemon'],
+        query: (
+          arg: {
+            option: string;
+            params: { limit: number; offset: number };
+          } | null
+        ) =>
+          arg
+            ? arg.option.concat(
+                `?offset=${arg.params.offset}&limit=${arg.params.limit}`
+              )
+            : 'error',
       }),
       getByNameOrIndexRequest: builder.query({
         query: (arg: { option: string; param: string }) =>
           arg.param ? arg.option.concat(`/${arg.param}`) : 'error',
-        providesTags: ['Pokemon'],
       }),
       getPokemonByUrl: builder.query({
         query: (pokemonUrl: string) => pokemonUrl,
-        providesTags: ['Pokemon'],
-      }),
-
-      invalidateCache: builder.mutation({
-        query: () => '',
-        invalidatesTags: ['Pokemon'],
       }),
     };
   },
@@ -41,5 +37,4 @@ export const {
   useGetAllRequestQuery,
   useGetByNameOrIndexRequestQuery,
   useGetPokemonByUrlQuery,
-  useInvalidateCacheMutation,
 } = pokemonApiSlice;

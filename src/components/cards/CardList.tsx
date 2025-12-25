@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import styles from './card.module.scss';
 import type { IObjectInfoResponse } from '../../types/types';
 import PokemonCard from './PokemonCard';
@@ -9,7 +9,6 @@ import { useNavigate } from 'react-router';
 import { replacePathParams } from '../../utils/replacePathParams';
 import { PATH } from '../../configs/routesConfig';
 import useLocalStorage from '../../hooks/useLocalStorage';
-import { getSearchValueFromLocalStorage } from '../../localStorage/localStorage';
 import { useDispatch, useSelector } from 'react-redux';
 import { changePageSlice, setPage } from '../../store/slices/pageSlice';
 import { setItem, setLoadingItem } from '../../store/slices/itemSlice';
@@ -24,7 +23,10 @@ import {
   searchValueSelector,
 } from '../../store/selectors';
 import { url } from '../../configs/apiConfig';
-import { parsePokemonObj } from '../../api/apiMethods';
+import {
+  getPokemonsFromAbilityOrTypeResponse,
+  parsePokemonObj,
+} from '../../api/apiMethods';
 
 interface State {
   items: IObjectInfoResponse[];
@@ -49,18 +51,23 @@ export default function CardList() {
   const page = useSelector(pageNumberSelector);
   const item = useSelector(itemSelector);
   const dispatch = useDispatch();
+  const loadingTimeoutRef = useRef<number | null>(null);
   const {
     data: pokemonsAtPageResponse,
     isLoading: pageIsLoading,
     isError: isPageError,
     error,
-  } = useGetAllRequestQuery({
-    option: requestOptions.pokemon,
-    params: {
-      limit: ITEMS_AT_PAGE,
-      offset: (!state.isSearchMood ? page : 0) * ITEMS_AT_PAGE,
-    },
-  });
+  } = useGetAllRequestQuery(
+    search
+      ? null
+      : {
+          option: requestOptions.pokemon,
+          params: {
+            limit: ITEMS_AT_PAGE,
+            offset: (!state.isSearchMood ? page : 0) * ITEMS_AT_PAGE,
+          },
+        }
+  );
 
   const {
     currentData: pokemonsByTypeResponse,
@@ -95,18 +102,18 @@ export default function CardList() {
       param: item.value?.name || '',
     });
 
+  const isErrorSearch =
+    isNameErrorRequest && isAbilityErrorRequest && isTypeErrorRequest;
+
   useEffect(() => {
-    if (
-      isNameErrorRequest &&
-      isAbilityErrorRequest &&
-      isTypeErrorRequest &&
-      search
-    ) {
+    if (search && isErrorSearch) {
+      console.log('notFound');
       setState({
         items: [],
         isSearchMood: true,
         isLoading: false,
       });
+      console.log(state);
       navigate(
         replacePathParams(PATH.pokemonNotFoundParams, {
           searchParam: search,
@@ -115,11 +122,16 @@ export default function CardList() {
         { replace: true }
       );
     }
-  }, [isNameErrorRequest && isAbilityErrorRequest && isTypeErrorRequest]);
+    return () => {
+      if (loadingTimeoutRef.current) {
+        clearTimeout(loadingTimeoutRef.current);
+      }
+    };
+  }, [isErrorSearch]);
 
   useEffect(() => {
     try {
-      if (!getSearchValueFromLocalStorage()) {
+      if (!search) {
         if (!pageIsLoading && pokemonsAtPageResponse) {
           if (isPageError) {
             throw error;
@@ -139,15 +151,14 @@ export default function CardList() {
           );
         }
       } else {
-        updateCards().then(() => {
-          navigate(
-            replacePathParams(PATH.pokemonParams, {
-              page: (page + 1).toString(),
-              searchParam: search,
-            }),
-            { replace: true }
-          );
-        });
+        updateCards();
+        navigate(
+          replacePathParams(PATH.pokemonParams, {
+            page: (page + 1).toString(),
+            searchParam: search,
+          }),
+          { replace: true }
+        );
       }
     } catch (err) {
       if (err instanceof Error) generateError(err.message);
@@ -161,76 +172,77 @@ export default function CardList() {
     pokemonsByTypeResponse,
   ]);
 
+  useEffect(() => {
+    if (item.value) {
+      navigate(
+        replacePathParams(PATH.itemParams, {
+          searchParam: search,
+          page: (page + 1).toString(),
+          item: item.value?.name,
+        })
+      );
+    }
+  }, [pageIsLoading && nameIsLoading && abilityIsLoading && typeIsLoading]);
+
   function generateError(message: string) {
     console.log(message);
     setError(true);
   }
 
   function setLoadingMood() {
-    setState({
-      items: state.items,
-      isSearchMood: state.isSearchMood,
-      isLoading: true,
+    setState((prevState: State) => {
+      return {
+        items: prevState.items,
+        isSearchMood: prevState.isSearchMood,
+        isLoading: true,
+      };
     });
+  }
+
+  function getPokemonsIfSearch() {
+    const pokemon =
+      !nameIsLoading &&
+      !isNameErrorRequest &&
+      pokemonsByNameResponse &&
+      pokemonsByNameResponse;
+    const pokemonsByAbility =
+      !isAbilityErrorRequest &&
+      !abilityIsLoading &&
+      pokemonsByAbilityResponse &&
+      getPokemonsFromAbilityOrTypeResponse(pokemonsByAbilityResponse);
+    const pokemonsByType =
+      !isTypeErrorRequest &&
+      !typeIsLoading &&
+      pokemonsByTypeResponse &&
+      getPokemonsFromAbilityOrTypeResponse(pokemonsByTypeResponse);
+    return pokemon || pokemonsByAbility || pokemonsByType;
   }
 
   async function updateCards() {
     try {
       setLoadingMood();
       if (isValidRequestString(search)) {
-        const pokemon =
-          !nameIsLoading &&
-          !isNameErrorRequest &&
-          pokemonsByNameResponse &&
-          pokemonsByNameResponse;
-        if (pokemon) {
-          setState({
-            items: [
-              {
-                name: pokemon.name,
-                url: url
-                  .concat(requestOptions.pokemon)
-                  .concat(`/${pokemon.id}`),
-              },
-            ],
-            isSearchMood: true,
-            isLoading: false,
-          });
-        } else {
-          const pokemonsByAbility =
-            !isAbilityErrorRequest &&
-            !abilityIsLoading &&
-            pokemonsByAbilityResponse &&
-            pokemonsByAbilityResponse.pokemon.map(
-              (item: { pokemon: IObjectInfoResponse }) => item.pokemon
-            );
-          const pokemonsByAbilityOrType =
-            pokemonsByAbility ||
-            (!isTypeErrorRequest &&
-              !typeIsLoading &&
-              pokemonsByTypeResponse &&
-              pokemonsByTypeResponse.pokemon.map(
-                (item: { pokemon: IObjectInfoResponse }) => item.pokemon
-              ));
-          if (pokemonsByAbilityOrType) {
+        const pokemons = getPokemonsIfSearch();
+        if (pokemons) {
+          if (!Array.isArray(pokemons)) {
             setState({
-              items: pokemonsByAbilityOrType,
+              items: [
+                {
+                  name: pokemons.name,
+                  url: url
+                    .concat(requestOptions.pokemon)
+                    .concat(`/${pokemons.id}`),
+                },
+              ],
               isSearchMood: true,
               isLoading: false,
             });
           } else {
             setState({
-              items: [],
+              items: pokemons,
               isSearchMood: true,
               isLoading: false,
             });
-            navigate(
-              replacePathParams(PATH.pokemonNotFoundParams, {
-                searchParam: search,
-                page: (page + 1).toString(),
-              }),
-              { replace: true }
-            );
           }
           dispatch(setPage(0));
         }
@@ -274,7 +286,7 @@ export default function CardList() {
       );
       const copyItems = state.items.slice();
       setLoadingMood();
-      setTimeout(() => {
+      loadingTimeoutRef.current = setTimeout(() => {
         setState({
           items: copyItems,
           isSearchMood: true,
@@ -336,29 +348,41 @@ export default function CardList() {
     }
   }
 
-  return state.isLoading || state.items.length === 0 ? (
-    <Loading />
-  ) : (
-    <>
-      {generateErrorIfHasError()}
-      <section
-        className={
-          state.items.length === 1
-            ? styles.result
-            : item.value
-              ? styles.results_half
-              : styles.results
-        }
-        data-testid="pokemon card wrap"
-      >
-        {getPokemonCards()}
-      </section>
-      <Pagination
-        pageNum={page + 1}
-        prevClick={prevClick}
-        nextClick={nextClick}
-        hasNextPage={hasNextPage()}
-      />
-    </>
+  function getLoading() {
+    return state.isLoading ||
+      !state.items ||
+      state.items.length === 0 ||
+      pageIsLoading ||
+      nameIsLoading ||
+      abilityIsLoading ||
+      typeIsLoading ? (
+      <Loading />
+    ) : null;
+  }
+
+  return (
+    getLoading() || (
+      <>
+        {generateErrorIfHasError()}
+        <section
+          className={
+            state.items.length === 1
+              ? styles.result
+              : item.value
+                ? styles.results_half
+                : styles.results
+          }
+          data-testid="pokemon card wrap"
+        >
+          {getPokemonCards()}
+        </section>
+        <Pagination
+          pageNum={page + 1}
+          prevClick={prevClick}
+          nextClick={nextClick}
+          hasNextPage={hasNextPage()}
+        />
+      </>
+    )
   );
 }
